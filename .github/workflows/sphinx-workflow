@@ -1,9 +1,8 @@
 name: Sphinx Documentation Generator
 
-
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -30,9 +29,4 @@ jobs:
       - name: Generate Documentation
         run: |
           cd docs
-          make clean html
           make html
-
-
-
-
