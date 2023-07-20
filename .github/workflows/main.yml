@@ -3,6 +3,8 @@ name: Sphinx Documentation Generator
 on:
   push:
     branches: ["main"]
+  pull_request:
+    branches: ["main"]
 
 jobs:
   build:
