@@ -31,6 +31,7 @@ jobs:
       - name: Generate Documentation
         run: |
           cd docs
+          make clean
           make html
 
       - name: Commit and Push Changes
