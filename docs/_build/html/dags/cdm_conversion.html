@@ -46,14 +46,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">CDM Conversion Script</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodule">Submodule</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-cdm_conversion.fm_cdm_master_transformation">cdm_conversion.fm_cdm_master_transformation module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#cdm_conversion.fm_cdm_master_transformation.execute"><code class="docutils literal notranslate"><span class="pre">execute()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cdm_conversion.fm_cdm_master_transformation.game_load_cdm_transformation"><code class="docutils literal notranslate"><span class="pre">game_load_cdm_transformation()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cdm_conversion.fm_cdm_master_transformation.gamingmachine_load_cdm_transformation"><code class="docutils literal notranslate"><span class="pre">gamingmachine_load_cdm_transformation()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cdm_conversion.fm_cdm_master_transformation.init_config"><code class="docutils literal notranslate"><span class="pre">init_config()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cdm_conversion.fm_cdm_master_transformation.venue_load_cdm_transformation"><code class="docutils literal notranslate"><span class="pre">venue_load_cdm_transformation()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cdm_conversion.fm_cdm_master_transformation">cdm_conversion.fm_cdm_master_transformation module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cdm-conversion-fm-cdm-transformation-module">cdm_conversion.fm_cdm_transformation module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cdm-conversion-fm-cdm-wager-primary-tfm-module">cdm_conversion.fm_cdm_wager_primary_tfm module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-cdm_conversion">Module contents</a></li>
@@ -109,87 +102,6 @@
 </section>
 <section id="module-cdm_conversion.fm_cdm_master_transformation">
 <span id="cdm-conversion-fm-cdm-master-transformation-module"></span><h2>cdm_conversion.fm_cdm_master_transformation module<a class="headerlink" href="#module-cdm_conversion.fm_cdm_master_transformation" title="Permalink to this heading"></a></h2>
-<p>Hello World!</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="cdm_conversion.fm_cdm_master_transformation.execute">
-<span class="sig-prename descclassname"><span class="pre">cdm_conversion.fm_cdm_master_transformation.</span></span><span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">customerName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdm_conversion/fm_cdm_master_transformation.html#execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cdm_conversion.fm_cdm_master_transformation.execute" title="Permalink to this definition"></a></dt>
-<dd><p>Loads the data to snowflake</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>customer</strong> – </p></li>
-<li><p><strong>batchid</strong> – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="cdm_conversion.fm_cdm_master_transformation.game_load_cdm_transformation">
-<span class="sig-prename descclassname"><span class="pre">cdm_conversion.fm_cdm_master_transformation.</span></span><span class="sig-name descname"><span class="pre">game_load_cdm_transformation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">customerName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdm_conversion/fm_cdm_master_transformation.html#game_load_cdm_transformation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cdm_conversion.fm_cdm_master_transformation.game_load_cdm_transformation" title="Permalink to this definition"></a></dt>
-<dd><p>Transform game data</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>Session</strong> – </p></li>
-<li><p><strong>batch</strong> – </p></li>
-<li><p><strong>customer</strong> – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Game dataframe</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="cdm_conversion.fm_cdm_master_transformation.gamingmachine_load_cdm_transformation">
-<span class="sig-prename descclassname"><span class="pre">cdm_conversion.fm_cdm_master_transformation.</span></span><span class="sig-name descname"><span class="pre">gamingmachine_load_cdm_transformation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">customerName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdm_conversion/fm_cdm_master_transformation.html#gamingmachine_load_cdm_transformation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cdm_conversion.fm_cdm_master_transformation.gamingmachine_load_cdm_transformation" title="Permalink to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>nothing</strong> (<em>This do</em>) – </p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Nothing</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="cdm_conversion.fm_cdm_master_transformation.init_config">
-<span class="sig-prename descclassname"><span class="pre">cdm_conversion.fm_cdm_master_transformation.</span></span><span class="sig-name descname"><span class="pre">init_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdm_conversion/fm_cdm_master_transformation.html#init_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cdm_conversion.fm_cdm_master_transformation.init_config" title="Permalink to this definition"></a></dt>
-<dd><p>This is a configparser</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>None</strong> – </p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Configparser object.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="cdm_conversion.fm_cdm_master_transformation.venue_load_cdm_transformation">
-<span class="sig-prename descclassname"><span class="pre">cdm_conversion.fm_cdm_master_transformation.</span></span><span class="sig-name descname"><span class="pre">venue_load_cdm_transformation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">customerName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/cdm_conversion/fm_cdm_master_transformation.html#venue_load_cdm_transformation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#cdm_conversion.fm_cdm_master_transformation.venue_load_cdm_transformation" title="Permalink to this definition"></a></dt>
-<dd><p>Transform venue data</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>Session</strong> – </p></li>
-<li><p><strong>batch</strong> – </p></li>
-<li><p><strong>customer</strong> – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Venue dataframe</p>
-</dd>
-</dl>
-</dd></dl>
-
 </section>
 <section id="cdm-conversion-fm-cdm-transformation-module">
 <h2>cdm_conversion.fm_cdm_transformation module<a class="headerlink" href="#cdm-conversion-fm-cdm-transformation-module" title="Permalink to this heading"></a></h2>
