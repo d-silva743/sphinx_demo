@@ -1,4 +1,4 @@
-name: Sphinx Documentation Generator
+name: Sphinx Documentation Generator!
 
 on:
   push:
