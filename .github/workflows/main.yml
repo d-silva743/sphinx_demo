@@ -35,7 +35,7 @@ jobs:
 
       - name: Commit and Push Changes
         run: |
-          git config --local user.name "Dom"
+          git config --local user.name "d-silva743"
           git config --local user.email "dom.silva@igt.com"
           git add .
           git commit -m "Update documentation"
