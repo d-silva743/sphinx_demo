@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>preprocessing.fm_data_segregation &mdash; CoDE Documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CoDE Documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">FM Scripts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../dags/cdm_conversion.html">CDM Conversion Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dags/ingestion.html">Ingestion Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dags/preprocessing.html">Preprocessing Script</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/setup.html">Setup your environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../requirements.html">Code Requirements</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Software Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../software-doc/cdata.html">cData Sync</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../software-doc/azure-sso.html">Azure SSO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Airflow</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../airflow-doc/deploy.html">Deploy Airflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../airflow-doc/doc.html">Restart Airflow</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CoDE Documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">preprocessing.fm_data_segregation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for preprocessing.fm_data_segregation</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">snowflake.snowpark.session</span> <span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span> <span class="nn">snowflake.snowpark.types</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">snowflake.snowpark.functions</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">snowflake.snowpark.functions</span> <span class="kn">import</span> <span class="n">col</span>
+<span class="kn">from</span> <span class="nn">snowflake.snowpark</span> <span class="kn">import</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">from</span> <span class="nn">snowflake.snowpark.window</span> <span class="kn">import</span> <span class="n">Window</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">configparser</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<div class="viewcode-block" id="init_config"><a class="viewcode-back" href="../../dags/preprocessing.html#preprocessing.fm_data_segregation.init_config">[docs]</a><span class="k">def</span> <span class="nf">init_config</span><span class="p">():</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+
+    <span class="n">parentFolderPath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">config_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parentFolderPath</span><span class="p">,</span> <span class="s1">&#39;common/utils&#39;</span><span class="p">,</span> <span class="s1">&#39;config.ini&#39;</span><span class="p">)</span>
+
+    <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_file_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">config</span></div>
+
+<div class="viewcode-block" id="fetchCuratedSessionsByBatchId"><a class="viewcode-back" href="../../dags/preprocessing.html#preprocessing.fm_data_segregation.fetchCuratedSessionsByBatchId">[docs]</a><span class="k">def</span> <span class="nf">fetchCuratedSessionsByBatchId</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">batchId</span><span class="p">,</span><span class="n">CustomerName</span><span class="p">):</span>
+    <span class="n">curatedDf</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;RAW.FM_Sessionized&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">((</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;customer&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">CustomerName</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;batch_Id&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">batchId</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initiated: Marking payout negative records to 0 &amp; Count step 4: </span><span class="si">{</span><span class="w"> </span><span class="n">curatedDf</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="w"> </span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># curatedDf.show(1)</span>
+    <span class="c1"># colmns=[&quot;EGMID&quot;,&quot;EVENTDATETIME&quot;,&quot;WAGER&quot;,&quot;TIME_DELTA&quot;,&quot;NEW_SESSIONS&quot;,&quot;GAMEPLAYLOGSEQUENCE&quot;,&quot;PAYOUT&quot;,&quot;SESSION_ID&quot;,&quot;UNIX_TIMESTAMP_UTC&quot;,&quot;BONUS_FLAG&quot;,&quot;SOFTWARE_ID&quot;]</span>
+    <span class="n">df_new</span><span class="o">=</span><span class="n">curatedDf</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">when</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;payout&quot;</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;payout&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;payout_new&quot;</span><span class="p">),</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;payout&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">withColumnRenamed</span><span class="p">(</span><span class="s2">&quot;payout_new&quot;</span><span class="p">,</span><span class="s2">&quot;payout&quot;</span><span class="p">)</span>
+    <span class="n">df_new</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s1">&#39;new_vw&#39;</span><span class="p">)</span>
+    <span class="n">df_final</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;select RECTYPE, EGMID, SESSIONID, THEMEID,&#39;&#39; THEMENAME, DEVICEID, DENOMID, TRANTIMESTAMP, GAMEPLAYLOGSEQUENCE, CREDITMETER, TRANAMT, PAYOUT, case when THEMEID is null then lag(THEMEID) ignore nulls over (partition by SESSIONID order by TRANTIMESTAMP,GAMEPLAYLOGSEQUENCE) else THEMEID end as THEMEID_NEW, PLAYERID, Customer, BATCH_ID from new_vw order by EgmId,SESSIONID,TRANTIMESTAMP&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;THEMEID&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">withColumnRenamed</span><span class="p">(</span><span class="s2">&quot;THEMEID_NEW&quot;</span><span class="p">,</span><span class="s2">&quot;THEMEID&quot;</span><span class="p">)</span>
+    <span class="n">df_final</span><span class="o">=</span><span class="n">df_final</span><span class="o">.</span><span class="n">filter</span><span class="p">((</span><span class="n">df_final</span><span class="o">.</span><span class="n">RECTYPE</span><span class="p">)</span><span class="o">.</span><span class="n">isin</span> <span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="s1">&#39;n&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;v&#39;</span><span class="p">,</span><span class="s1">&#39;pss&#39;</span><span class="p">,</span><span class="s1">&#39;pse&#39;</span><span class="p">))</span>
+    
+    <span class="c1"># df_final.show(1)</span>
+    <span class="c1"># df_final_wagernull=df_final.filter(col(&quot;TRANAMT&quot;).isNull() | col(&quot;TRANAMT&quot;)&lt;0).distinct()</span>
+    <span class="n">df_final_wagernull_1</span><span class="o">=</span><span class="n">df_final</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;TRANAMT&quot;</span><span class="p">)</span> <span class="o">&lt;</span><span class="mi">0</span> <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">df_final_wagernull_1</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+    <span class="c1"># df_final_wagernull_2=df_final.filter(col(&quot;TRANAMT&quot;).isNull())</span>
+    <span class="c1"># print(df_final_wagernull_2.count())</span>
+    <span class="c1"># df_final_wagernull = df_final_wagernull_1.unionAll(df_final_wagernull_2).distinct()</span>
+    <span class="n">df_final_wagernull</span><span class="o">=</span><span class="n">df_final_wagernull_1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">df_final_wagernull</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+    <span class="n">invalid_sessions_tranamt</span><span class="o">=</span><span class="n">df_final_wagernull_1</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;SESSIONID&quot;</span><span class="p">))</span> \
+                        <span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;error_type&quot;</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="s2">&quot;SessionLength&quot;</span><span class="p">))</span> \
+                        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;err_rec_load_ts&quot;</span><span class="p">,</span> <span class="n">current_timestamp</span><span class="p">()</span> <span class="p">)</span> \
+                        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;CustomerName&quot;</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="n">CustomerName</span><span class="p">)</span>  <span class="p">)</span> \
+                        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;BATCHID&quot;</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="n">batchId</span><span class="p">)</span> <span class="p">)</span> 
+
+    <span class="n">invalid_sessions_tranamt</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;append&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save_as_table</span><span class="p">(</span><span class="s2">&quot;RAW.invalid_sessions_fm&quot;</span><span class="p">)</span>
+
+    <span class="n">df_final_wagernull_f</span><span class="o">=</span><span class="n">df_final_wagernull</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;RECTYPE&quot;</span><span class="p">,</span> <span class="s2">&quot;EGMID&quot;</span><span class="p">,</span> <span class="s2">&quot;SESSIONID&quot;</span><span class="p">,</span> <span class="s2">&quot;THEMEID&quot;</span><span class="p">,</span> <span class="s2">&quot;THEMENAME&quot;</span><span class="p">,</span> <span class="s2">&quot;DEVICEID&quot;</span><span class="p">,</span> <span class="s2">&quot;DENOMID&quot;</span><span class="p">,</span> <span class="s2">&quot;TRANTIMESTAMP&quot;</span><span class="p">,</span> <span class="s2">&quot;GAMEPLAYLOGSEQUENCE&quot;</span><span class="p">,</span> <span class="s2">&quot;CREDITMETER&quot;</span><span class="p">,</span> <span class="s2">&quot;TRANAMT&quot;</span><span class="p">,</span> <span class="s2">&quot;PAYOUT&quot;</span><span class="p">,</span> <span class="s2">&quot;PLAYERID&quot;</span><span class="p">,</span> <span class="s2">&quot;Customer&quot;</span><span class="p">,</span> <span class="s2">&quot;BATCH_ID&quot;</span><span class="p">)</span>
+    <span class="c1"># df_final_wagernull_f.show(1)</span>
+    <span class="n">df_final_wagernull_f</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s1">&#39;append&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">saveAsTable</span><span class="p">(</span><span class="s1">&#39;RAW.FM_RAW_DUP&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Completed: Marking payout negative records to 0&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initiated: Removing negative TRANAMT&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">df_final</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+    <span class="c1"># curatedDf=df_final.filter(col(&quot;TRANAMT&quot;).isNotNull() ).filter(col(&quot;TRANAMT&quot;)&gt;=0)</span>
+    <span class="n">curatedDf</span><span class="o">=</span><span class="n">df_final</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">curatedDf</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Completed: Removing negative TRANAMT&quot;</span><span class="p">)</span>
+    <span class="c1"># print(&quot;Initiated: Save of curated data&quot;)</span>
+    <span class="c1"># # curatedDf.show(1)</span>
+    <span class="c1"># curatedDf.write.mode(&#39;append&#39;).saveAsTable(&#39;RAW.FM_CURATED&#39;)</span>
+    <span class="c1"># print(&quot;Completed: Save of curated data&quot;)</span>
+    <span class="k">return</span> <span class="n">curatedDf</span></div>
+
+<div class="viewcode-block" id="prioritized_sort_fm"><a class="viewcode-back" href="../../dags/preprocessing.html#preprocessing.fm_data_segregation.prioritized_sort_fm">[docs]</a><span class="k">def</span> <span class="nf">prioritized_sort_fm</span><span class="p">(</span><span class="n">curatedDf</span><span class="p">):</span>
+    <span class="c1"># print(&quot;Initiated: Preprocessing - sorting raw data by session, record types&quot;)</span>
+    <span class="c1"># add filter for batchid = {batch_id} &amp; pass as parameter to the function in above line</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Info: No. of records in fm RAW table : </span><span class="si">{</span><span class="w"> </span><span class="n">curatedDf</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="w"> </span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Sorting the fm RAW Table</span>
+    
+    <span class="n">curatedDf</span> <span class="o">=</span> <span class="n">curatedDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;sortpriority&#39;</span><span class="p">,</span> 
+                <span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rectype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rectype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;game_changed&#39;</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rectype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;n&#39;</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rectype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rectype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rectype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;x&#39;</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>    
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rectype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="mi">7</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rectype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;o&#39;</span><span class="p">),</span> <span class="mi">8</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rectype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span><span class="p">),</span> <span class="mi">9</span><span class="p">)</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+            <span class="p">)</span>
+    <span class="c1"># curatedDf.show(1)</span>
+    <span class="n">fm_sorted</span> <span class="o">=</span> <span class="n">curatedDf</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;SESSIONID&quot;</span><span class="p">,</span><span class="s2">&quot;sortpriority&quot;</span><span class="p">,)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;sortpriority&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Completed: Preprocessing - sorting raw data by session, record types&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fm_sorted</span></div>
+
+<div class="viewcode-block" id="fetch_invalid_sessions"><a class="viewcode-back" href="../../dags/preprocessing.html#preprocessing.fm_data_segregation.fetch_invalid_sessions">[docs]</a><span class="k">def</span> <span class="nf">fetch_invalid_sessions</span><span class="p">(</span><span class="n">fm_sorted</span><span class="p">,</span> <span class="n">batchId</span><span class="p">,</span> <span class="n">CustomerName</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initiated: Preprocessing - filtering invalid sessions&quot;</span><span class="p">)</span>
+
+    <span class="c1">#1. check for minimum session length ==&gt; &quot;SessionLength&quot;</span>
+    <span class="n">invalidSessdf</span> <span class="o">=</span> <span class="n">fm_sorted</span> \
+        <span class="o">.</span><span class="n">filter</span><span class="p">((</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;RECTYPE&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;TRANAMT&#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="s1">&#39;0&#39;</span><span class="p">))</span> \
+        <span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;SESSIONID&#39;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;SESSIONID&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s1">&#39;no_of_primary_wager_commands&#39;</span><span class="p">))</span> \
+        <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;NO_OF_PRIMARY_WAGER_COMMANDS&#39;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;SESSIONID&#39;</span><span class="p">)</span>
+
+    <span class="n">invalidSessList</span> <span class="o">=</span> <span class="n">invalidSessdf</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;printing invalidlist&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">invalidSessList</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">invalidSessList</span><span class="o">==</span><span class="p">[]:</span>
+        <span class="n">invalidSessList</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">fm_sorted</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;SESSIONID&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">invalidSessList</span><span class="p">))</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">fm_sorted</span><span class="o">.</span><span class="n">sessionid</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+    <span class="n">final_errors</span> <span class="o">=</span> <span class="n">fm_sorted</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;SESSIONID&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">invalidSessList</span><span class="p">))</span> \
+        <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;SESSIONID&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;error_type&quot;</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="s2">&quot;SessionLength&quot;</span><span class="p">))</span> \
+        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;err_rec_load_ts&quot;</span><span class="p">,</span> <span class="n">current_timestamp</span><span class="p">())</span> \
+        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;CustomerName&quot;</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="n">CustomerName</span><span class="p">)</span> <span class="p">)</span> \
+        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;BATCHID&quot;</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="n">batchId</span><span class="p">)</span> <span class="p">)</span> 
+
+    <span class="c1"># final_errors.show()</span>
+    
+    <span class="n">final_errors</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;append&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save_as_table</span><span class="p">(</span><span class="s2">&quot;RAW.invalid_sessions_fm&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fm_sorted</span></div>
+    <span class="c1"># def cashout_invalid_sessions(fm_sorted, batchId, CustomerName):</span>
+    <span class="c1">#     # 5. check if residual credits after cashout ==&gt; &quot;ResidualCredits&quot;</span>
+    <span class="c1">#     # fm_sorted.show(1)</span>
+    <span class="c1">#     ResidualCredits = fm_sorted \</span>
+    <span class="c1">#         .filter((col(&#39;RECTYPE&#39;).isin (&#39;v&#39;)) &amp; (col(&#39;CREDITMETER&#39;) != 0)) \</span>
+    <span class="c1">#                 .select(&quot;SESSIONID&quot;).distinct().withColumn(&quot;error_type&quot;, lit(&quot;ResidualCredits&quot;)) \</span>
+    <span class="c1">#                 .withColumn(&quot;err_rec_load_ts&quot;, current_timestamp()) \</span>
+    <span class="c1">#                             .withColumn(&quot;CustomerName&quot;, lit(CustomerName) ) \</span>
+    <span class="c1">#                             .withColumn(&quot;BATCHID&quot;, lit(batchId)  )</span>
+    <span class="c1">#     ResidualCredits.write.mode(&quot;append&quot;).save_as_table(&quot;RAW.invalid_sessions_fm&quot;)</span>
+
+    <span class="c1">#     # 6.a check if only one cashOut and if this is the last command</span>
+    <span class="c1">#     #</span>
+    <span class="c1">#     one_cashout = fm_sorted.filter(col(&#39;RECTYPE&#39;) == &#39;v&#39;).groupBy(&quot;SESSIONID&quot;, &quot;RECTYPE&quot;).count()</span>
+    <span class="c1">#     one_cashout = one_cashout.filter(col(&#39;COUNT&#39;) &gt; 1 ).drop(&quot;COUNT&quot;,&quot;RECTYPE&quot;) \</span>
+    <span class="c1">#                             .distinct() \</span>
+    <span class="c1">#                             .withColumn(&quot;error_type&quot;, lit(&quot;more_cashouts&quot;)) \</span>
+    <span class="c1">#                             .withColumn(&quot;err_rec_load_ts&quot;, current_timestamp() ) \</span>
+    <span class="c1">#                             .withColumn(&quot;CustomerName&quot;, lit(CustomerName) ) \</span>
+    <span class="c1">#                             .withColumn(&quot;BATCHID&quot;, lit(batchId)  )</span>
+    <span class="c1">#     one_cashout.write.mode(&quot;append&quot;).save_as_table(&quot;RAW.invalid_sessions_fm&quot;)</span>
+    <span class="c1">#     return fm_sorted</span>
+
+<div class="viewcode-block" id="cashin_position_invalid_sessions"><a class="viewcode-back" href="../../dags/preprocessing.html#preprocessing.fm_data_segregation.cashin_position_invalid_sessions">[docs]</a><span class="k">def</span> <span class="nf">cashin_position_invalid_sessions</span><span class="p">(</span><span class="n">fm_sorted</span><span class="p">,</span> <span class="n">batchId</span><span class="p">,</span> <span class="n">CustomerName</span><span class="p">):</span>
+
+    <span class="n">windowSpec</span> <span class="o">=</span> <span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="s2">&quot;SESSIONID&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s2">&quot;EGMID&quot;</span><span class="p">,</span><span class="s2">&quot;SESSIONID&quot;</span><span class="p">,</span><span class="s2">&quot;TRANTIMESTAMP&quot;</span><span class="p">,</span><span class="s2">&quot;GAMEPLAYLOGSEQUENCE&quot;</span><span class="p">)</span>
+    <span class="n">cashin_pos</span><span class="o">=</span><span class="n">fm_sorted</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;row_number_col&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">row_number</span><span class="p">()</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">windowSpec</span><span class="p">))</span> \
+                        <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;RECTYPE&quot;</span><span class="p">),</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;EGMID&quot;</span><span class="p">),</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;SESSIONID&quot;</span><span class="p">),</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;TRANTIMESTAMP&quot;</span><span class="p">),</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;GAMEPLAYLOGSEQUENCE&quot;</span><span class="p">),</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;ROW_NUMBER_COL&quot;</span><span class="p">))</span> \
+                        <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;row_number_col&#39;</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># print(cashin_pos.select(fm_sorted.sessionid).distinct().count())</span>
+    <span class="c1"># cashin_pos.show(1)</span>
+    <span class="n">cashin_pos</span><span class="o">=</span><span class="n">cashin_pos</span><span class="o">.</span><span class="n">filter</span><span class="p">((</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rectype&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">&#39;t&#39;</span> <span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rectype&quot;</span><span class="p">)</span>  <span class="o">!=</span> <span class="s1">&#39;n&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rectype&quot;</span><span class="p">)</span>  <span class="o">!=</span> <span class="s1">&#39;c&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cashin_pos</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">fm_sorted</span><span class="o">.</span><span class="n">sessionid</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+    <span class="n">cashin_pos</span> <span class="o">=</span> <span class="n">cashin_pos</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;SESSIONID&quot;</span><span class="p">)</span> \
+                            <span class="o">.</span><span class="n">distinct</span><span class="p">()</span> \
+                            <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;error_type&quot;</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="s2">&quot;cashin_position&quot;</span><span class="p">))</span> \
+                            <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;err_rec_load_ts&quot;</span><span class="p">,</span> <span class="n">current_timestamp</span><span class="p">()</span> <span class="p">)</span> \
+                            <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;CustomerName&quot;</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="n">CustomerName</span><span class="p">)</span> <span class="p">)</span> \
+                            <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;BATCHID&quot;</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="n">batchId</span><span class="p">)</span>  <span class="p">)</span>
+    <span class="c1"># cashin_pos.show(1)</span>
+    <span class="c1"># print(cashin_pos.count())</span>
+
+    <span class="n">cashin_pos</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;append&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save_as_table</span><span class="p">(</span><span class="s2">&quot;RAW.invalid_sessions_fm&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fm_sorted</span></div>
+
+<div class="viewcode-block" id="stm_w_check"><a class="viewcode-back" href="../../dags/preprocessing.html#preprocessing.fm_data_segregation.stm_w_check">[docs]</a><span class="k">def</span> <span class="nf">stm_w_check</span><span class="p">(</span><span class="n">fm_sorted</span><span class="p">,</span> <span class="n">batchId</span><span class="p">,</span> <span class="n">CustomerName</span><span class="p">):</span>
+    <span class="c1"># fm_sorted.show(1)</span>
+    <span class="n">sessionsDf_new</span><span class="o">=</span><span class="n">fm_sorted</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;rectype&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isin</span> <span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;pse&#39;</span><span class="p">,</span><span class="s1">&#39;pss&#39;</span><span class="p">))</span>
+    <span class="n">sessionsDf_new_1</span><span class="o">=</span><span class="n">sessionsDf_new</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;rectype_nextrec&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">lead</span><span class="p">(</span><span class="n">sessionsDf_new</span><span class="o">.</span><span class="n">rectype</span><span class="p">)</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="n">sessionsDf_new</span><span class="o">.</span><span class="n">egmId</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">sessionsDf_new</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">,</span> <span class="n">sessionsDf_new</span><span class="o">.</span><span class="n">gameplaylogsequence</span><span class="p">))</span> <span class="p">)</span>
+    <span class="n">sessionsDf_new_2</span><span class="o">=</span><span class="n">sessionsDf_new_1</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;invalid_sess_check&#39;</span><span class="p">,</span> \
+                                <span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">(((</span><span class="n">sessionsDf_new_1</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;pss&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">((</span><span class="n">sessionsDf_new_1</span><span class="o">.</span><span class="n">rectype_nextrec</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">sessionsDf_new_1</span><span class="o">.</span><span class="n">rectype_nextrec</span> <span class="o">==</span> <span class="s1">&#39;x&#39;</span><span class="p">)</span> <span class="p">)</span> <span class="p">),</span> <span class="n">lit</span><span class="p">(</span><span class="s1">&#39;valid_sess&#39;</span><span class="p">))</span> \
+                                <span class="o">.</span><span class="n">when</span><span class="p">(((</span><span class="n">sessionsDf_new_1</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;pss&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">sessionsDf_new_1</span><span class="o">.</span><span class="n">rectype_nextrec</span> <span class="o">==</span> <span class="s1">&#39;pse&#39;</span><span class="p">)</span> <span class="p">),</span> <span class="n">lit</span><span class="p">(</span><span class="s1">&#39;invalid_sess&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+    <span class="n">sessionsDf_new_3</span><span class="o">=</span><span class="n">sessionsDf_new_2</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;invalid_sess_check&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isin</span> <span class="p">(</span><span class="s1">&#39;invalid_sess&#39;</span><span class="p">))</span>
+
+    <span class="n">pss_sess_df</span><span class="o">=</span><span class="n">fm_sorted</span><span class="o">.</span><span class="n">filter</span><span class="p">((</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rectype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;pss&#39;</span> <span class="p">))</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">fm_sorted</span><span class="o">.</span><span class="n">sessionid</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">pss_sess_df</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+
+    <span class="n">pse_sess_df</span><span class="o">=</span><span class="n">fm_sorted</span><span class="o">.</span><span class="n">filter</span><span class="p">((</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;rectype&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;pse&#39;</span> <span class="p">))</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">fm_sorted</span><span class="o">.</span><span class="n">sessionid</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">pse_sess_df</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+
+    <span class="n">pss_pse_sess_df</span><span class="o">=</span><span class="n">pss_sess_df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pse_sess_df</span><span class="p">,</span><span class="n">pss_sess_df</span><span class="o">.</span><span class="n">sessionid</span><span class="o">==</span><span class="n">pse_sess_df</span><span class="o">.</span><span class="n">sessionid</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">pss_sess_df</span><span class="o">.</span><span class="n">sessionid</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;pss_sessionid&quot;</span><span class="p">),</span> <span class="n">pse_sess_df</span><span class="o">.</span><span class="n">sessionid</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;pse_sessionid&quot;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">pss_pse_sess_df</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+
+    <span class="n">invalid_sessions_df</span> <span class="o">=</span><span class="n">fm_sorted</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;sessionid&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pss_pse_sess_df</span><span class="p">,</span> <span class="n">pss_pse_sess_df</span><span class="o">.</span><span class="n">pss_sessionid</span> <span class="o">==</span> <span class="n">fm_sorted</span><span class="o">.</span><span class="n">SESSIONID</span><span class="p">,</span> <span class="s1">&#39;leftanti&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">invalid_sessions_df</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+
+    <span class="n">union_df</span><span class="o">=</span><span class="n">invalid_sessions_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;SESSIONID&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">sessionsDf_new_3</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;SESSIONID&quot;</span><span class="p">))</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="n">union_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">fm_sorted</span><span class="o">.</span><span class="n">sessionid</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+    <span class="c1"># cashin_pos.show(1)</span>
+    <span class="n">cashin_pos</span> <span class="o">=</span> <span class="n">union_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;SESSIONID&quot;</span><span class="p">)</span> \
+                            <span class="o">.</span><span class="n">distinct</span><span class="p">()</span> \
+                            <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;error_type&quot;</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="s2">&quot;stm_pss_pse_no_w_records&quot;</span><span class="p">))</span> \
+                            <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;err_rec_load_ts&quot;</span><span class="p">,</span> <span class="n">current_timestamp</span><span class="p">()</span> <span class="p">)</span> \
+                            <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;CustomerName&quot;</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="n">CustomerName</span><span class="p">)</span> <span class="p">)</span> \
+                            <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;BATCHID&quot;</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="n">batchId</span><span class="p">)</span>  <span class="p">)</span>
+    <span class="c1"># cashin_pos.show(1)</span>
+    <span class="c1"># print(cashin_pos.count())</span>
+
+    <span class="n">cashin_pos</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;append&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save_as_table</span><span class="p">(</span><span class="s2">&quot;RAW.invalid_sessions_fm&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fm_sorted</span></div>
+
+<div class="viewcode-block" id="check_valid_wager_pair_for_intensity"><a class="viewcode-back" href="../../dags/preprocessing.html#preprocessing.fm_data_segregation.check_valid_wager_pair_for_intensity">[docs]</a><span class="k">def</span> <span class="nf">check_valid_wager_pair_for_intensity</span><span class="p">(</span><span class="n">fm_sorted</span><span class="p">,</span> <span class="n">batchId</span><span class="p">,</span> <span class="n">CustomerName</span><span class="p">):</span>
+    <span class="n">wagerDf</span> <span class="o">=</span> <span class="n">fm_sorted</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;rectype&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">))</span>
+
+    <span class="n">wagerTimesDf</span> <span class="o">=</span> <span class="n">wagerDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;prev_wager_amt&#39;</span><span class="p">,</span> 
+                        <span class="n">F</span><span class="o">.</span><span class="n">lag</span><span class="p">(</span><span class="n">wagerDf</span><span class="o">.</span><span class="n">tranamt</span><span class="p">)</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="n">wagerDf</span><span class="o">.</span><span class="n">sessionid</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">wagerDf</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">)))</span>
+
+    <span class="n">wagerTimesDf</span> <span class="o">=</span> <span class="n">wagerTimesDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;prev_wager_timestamp&#39;</span><span class="p">,</span> 
+                        <span class="n">F</span><span class="o">.</span><span class="n">lag</span><span class="p">(</span><span class="n">wagerDf</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">)</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="n">wagerDf</span><span class="o">.</span><span class="n">sessionid</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">wagerDf</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">)))</span> \
+        
+    <span class="n">filteredDf</span> <span class="o">=</span> <span class="n">wagerTimesDf</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">wagerTimesDf</span><span class="o">.</span><span class="n">prev_wager_timestamp</span><span class="o">.</span><span class="n">isNotNull</span><span class="p">())</span>
+
+    <span class="n">timeDiffDf</span> <span class="o">=</span> <span class="n">filteredDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;seconds_between_next_wager&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">(((</span><span class="n">wagerTimesDf</span><span class="o">.</span><span class="n">tranamt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">wagerTimesDf</span><span class="o">.</span><span class="n">prev_wager_amt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)),</span> 
+                                            <span class="n">F</span><span class="o">.</span><span class="n">datediff</span><span class="p">(</span><span class="s1">&#39;second&#39;</span><span class="p">,</span> <span class="n">filteredDf</span><span class="o">.</span><span class="n">prev_wager_timestamp</span><span class="p">,</span> <span class="n">filteredDf</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">))</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+
+    <span class="n">timeDiffDf</span> <span class="o">=</span> <span class="n">timeDiffDf</span><span class="o">.</span><span class="n">filter</span><span class="p">((</span><span class="n">timeDiffDf</span><span class="o">.</span><span class="n">tranamt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">timeDiffDf</span><span class="o">.</span><span class="n">prev_wager_amt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="n">wagerPairStatusDf</span> <span class="o">=</span> <span class="n">timeDiffDf</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="n">timeDiffDf</span><span class="o">.</span><span class="n">sessionid</span><span class="p">)</span> \
+                            <span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+                                <span class="p">((</span><span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">timeDiffDf</span><span class="o">.</span><span class="n">seconds_between_next_wager</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+                                <span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s1">&#39;has_valid_wager_pair&#39;</span><span class="p">)</span>
+                                <span class="p">)</span>
+    
+    <span class="c1"># wagerPairStatusDf.show()</span>
+
+    <span class="n">invalidSessionsDf</span> <span class="o">=</span> <span class="n">wagerPairStatusDf</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">wagerPairStatusDf</span><span class="o">.</span><span class="n">has_valid_wager_pair</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span>
+  
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid wager pair sessions count: </span><span class="si">{</span><span class="n">invalidSessionsDf</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">invalidSessionsDf</span><span class="o">.</span><span class="n">sessionid</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">wagerPairErrosDf</span> <span class="o">=</span> <span class="n">invalidSessionsDf</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;SESSIONID&quot;</span><span class="p">)</span> \
+                            <span class="o">.</span><span class="n">distinct</span><span class="p">()</span> \
+                            <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;error_type&quot;</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="s2">&quot;no_valid_wager_pairs_found_in_session_to_calculate_intensity&quot;</span><span class="p">))</span> \
+                            <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;err_rec_load_ts&quot;</span><span class="p">,</span> <span class="n">current_timestamp</span><span class="p">())</span> \
+                            <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;CustomerName&quot;</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="n">CustomerName</span><span class="p">))</span> \
+                            <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;BATCHID&quot;</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="n">batchId</span><span class="p">))</span>
+
+    <span class="n">wagerPairErrosDf</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">&quot;append&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">save_as_table</span><span class="p">(</span><span class="s2">&quot;RAW.invalid_sessions_fm&quot;</span><span class="p">)</span></div>
+
+<span class="c1">#region Future error handling cases</span>
+<span class="c1"># def creditmeter_invalid_sessions(fm_sorted, batchId, CustomerName):</span>
+<span class="c1">#     # 6.c --credit meter</span>
+<span class="c1">#     windowSpec = Window.partitionBy(&quot;SESSIONID&quot;).orderBy(&quot;EGMID&quot;,&quot;SESSIONID&quot;,&quot;TRANTIMESTAMP&quot;,&quot;GAMEPLAYLOGSEQUENCE&quot;)</span>
+<span class="c1">#     cashin_pos=fm_sorted.withColumn(&#39;row_number_col&#39;, F.count(col(&quot;RECTYPE&quot;)).over(windowSpec)) \</span>
+<span class="c1">#                         .select(col(&quot;RECTYPE&quot;),col(&quot;EGMID&quot;),col(&quot;SESSIONID&quot;),col(&quot;TRANTIMESTAMP&quot;),col(&quot;GAMEPLAYLOGSEQUENCE&quot;),col(&quot;ROW_NUMBER_COL&quot;))</span>
+    
+    
+
+
+<span class="c1">#     creditmeter = fm_sorted.withColumn(&#39;row_number&#39;, F.row_number().over(windowSpec)) \</span>
+<span class="c1">#     .withColumn(&#39;last&#39;, F.max(&#39;row_number&#39;).over(window2)) \</span>
+<span class="c1">#     .filter(&#39;row_number = last&#39;) \</span>
+<span class="c1">#     .select(&quot;SESSIONID&quot;,&quot;CREDITMETER&quot;,&quot;row_number&quot;,&quot;last&quot;)</span>
+
+<span class="c1">#     creditmeter_df = creditmeter.filter(col(&quot;CREDITMETER&quot;) != 0).select(&quot;SESSIONID&quot;) \</span>
+<span class="c1">#                                 .distinct() \</span>
+<span class="c1">#                                 .withColumn(&quot;error_type&quot;, lit(&quot;creditmeter&quot;)) \</span>
+<span class="c1">#                                 .withColumn(&quot;err_rec_load_ts&quot;, current_timestamp() ) \</span>
+<span class="c1">#                                 .withColumn(&quot;CustomerName&quot;, lit(CustomerName) ) \</span>
+<span class="c1">#                                 .withColumn(&quot;BATCHID&quot;, lit(batchId)  )</span>
+<span class="c1">#     creditmeter_df.write.mode(&quot;append&quot;).save_as_table(&quot;RAW.invalid_sessions_fm&quot;)</span>
+<span class="c1">#     # print(&quot;Initiated: Save of curated data&quot;)</span>
+<span class="c1">#     # # curatedDf.show(1)</span>
+<span class="c1">#     # creditmeter_df.write.mode(&#39;append&#39;).saveAsTable(&#39;RAW.FM_CURATED&#39;)</span>
+<span class="c1">#     # print(&quot;Completed: Save of curated data&quot;)</span>
+
+<span class="c1">#     print(&quot;Completed: Preprocessing - filtering invalid sessions&quot;)</span>
+<span class="c1">#     return fm_sorted</span>
+
+<span class="c1">#endregion Keeping for future error handling cases</span>
+
+<div class="viewcode-block" id="curated_data_load"><a class="viewcode-back" href="../../dags/preprocessing.html#preprocessing.fm_data_segregation.curated_data_load">[docs]</a><span class="k">def</span> <span class="nf">curated_data_load</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="n">batchId</span><span class="p">,</span><span class="n">CustomerName</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initiated: Save of curated data&quot;</span><span class="p">)</span>
+    <span class="c1"># curatedDf.show(1)</span>
+    <span class="n">curatedDf</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;RAW.FM_Sessionized&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;batch_id&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">batchId</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;Customer&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">CustomerName</span><span class="p">)</span>
+    <span class="n">invalid_sess</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;RAW.INVALID_SESSIONS_FM&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;batchid&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">batchId</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;Customer&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">CustomerName</span><span class="p">)</span>
+    <span class="n">valid_sess_df</span> <span class="o">=</span> <span class="n">curatedDf</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">invalid_sess</span><span class="p">,</span> <span class="n">curatedDf</span><span class="o">.</span><span class="n">SESSIONID</span> <span class="o">==</span> <span class="n">invalid_sess</span><span class="o">.</span><span class="n">SESSIONID</span><span class="p">,</span> <span class="s1">&#39;leftanti&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Info: No. of InValid Sessions : </span><span class="si">{</span><span class="w"> </span><span class="n">invalid_sess</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Info: No. of Valid Sessions : </span><span class="si">{</span><span class="w"> </span><span class="n">curatedDf</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">valid_sess_df</span><span class="o">=</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">when</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;payout&quot;</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span> <span class="n">lit</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;payout&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;payout_new&quot;</span><span class="p">),</span><span class="s1">&#39;*&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;payout&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">withColumnRenamed</span><span class="p">(</span><span class="s2">&quot;payout_new&quot;</span><span class="p">,</span><span class="s2">&quot;payout&quot;</span><span class="p">)</span>
+    <span class="c1">#******</span>
+    <span class="n">valid_sess_df</span> <span class="o">=</span> <span class="n">valid_sess_df</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;THEMEID_NEW&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">lag</span><span class="p">(</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">THEMEID</span><span class="p">,</span> <span class="n">ignore_nulls</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">sessionId</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">TRANTIMESTAMP</span><span class="p">)))</span> \
+                <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;THEMENAME_NEW&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">lag</span><span class="p">(</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">THEMENAME</span><span class="p">,</span> <span class="n">ignore_nulls</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">sessionId</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">TRANTIMESTAMP</span><span class="p">)))</span> \
+                <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;THEMEID&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">withColumnRenamed</span><span class="p">(</span><span class="s2">&quot;THEMEID_NEW&quot;</span><span class="p">,</span><span class="s2">&quot;THEMEID&quot;</span><span class="p">)</span> \
+                <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;THEMENAME&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">withColumnRenamed</span><span class="p">(</span><span class="s2">&quot;THEMENAME_NEW&quot;</span><span class="p">,</span><span class="s2">&quot;THEMENAME&quot;</span><span class="p">)</span>
+    <span class="c1">#******</span>
+    <span class="n">valid_sess_df</span><span class="o">=</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;creditmeter&quot;</span><span class="p">)</span>
+    <span class="n">valid_sess_df_1</span><span class="o">=</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;intermim_creditmeter&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span><span class="p">),</span> <span class="n">valid_sess_df</span><span class="o">.</span><span class="n">tranamt</span><span class="p">)</span> \
+                              <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span><span class="p">),</span> <span class="n">valid_sess_df</span><span class="o">.</span><span class="n">payout</span><span class="o">-</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">tranamt</span><span class="p">)</span> \
+                              <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;x&#39;</span><span class="p">),</span> <span class="n">valid_sess_df</span><span class="o">.</span><span class="n">payout</span><span class="o">-</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">tranamt</span><span class="p">)</span> \
+                              <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span><span class="p">),</span> <span class="o">-</span><span class="n">valid_sess_df</span><span class="o">.</span><span class="n">tranamt</span><span class="p">)</span> \
+                              <span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="kc">None</span><span class="p">)))</span> 
+
+    <span class="n">valid_sess_df_2</span><span class="o">=</span><span class="n">valid_sess_df_1</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;CREDITMETER&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">valid_sess_df_1</span><span class="o">.</span><span class="n">intermim_creditmeter</span><span class="p">)</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="n">valid_sess_df_1</span><span class="o">.</span><span class="n">SESSIONID</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">valid_sess_df_1</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">,</span> <span class="n">valid_sess_df_1</span><span class="o">.</span><span class="n">GAMEPLAYLOGSEQUENCE</span><span class="p">)))</span> 
+    <span class="n">areaidFill</span> <span class="o">=</span> <span class="n">valid_sess_df_2</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;AREAID&#39;</span><span class="p">,</span><span class="n">when</span><span class="p">(</span><span class="n">valid_sess_df_2</span><span class="o">.</span><span class="n">areaid</span><span class="o">.</span><span class="n">isNull</span><span class="p">(),</span><span class="n">substring</span><span class="p">(</span><span class="n">valid_sess_df_2</span><span class="o">.</span><span class="n">LOCATION</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+                                         <span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="n">valid_sess_df_2</span><span class="o">.</span><span class="n">AREAID</span><span class="p">))</span>
+    <span class="n">validFinalDf</span><span class="o">=</span><span class="n">areaidFill</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;EGMID&quot;</span><span class="p">,</span><span class="s2">&quot;RECTYPE&quot;</span><span class="p">,</span><span class="s2">&quot;SESSIONID&quot;</span><span class="p">,</span><span class="s2">&quot;TRANTIMESTAMP&quot;</span><span class="p">,</span><span class="s2">&quot;GAMEPLAYLOGSEQUENCE&quot;</span><span class="p">,</span><span class="s2">&quot;CREDITMETER&quot;</span><span class="p">,</span><span class="s2">&quot;TRANAMT&quot;</span><span class="p">,</span><span class="s2">&quot;PAYOUT&quot;</span><span class="p">,</span><span class="s2">&quot;THEMEID&quot;</span><span class="p">,</span><span class="s2">&quot;THEMENAME&quot;</span><span class="p">,</span><span class="s2">&quot;DEVICEID&quot;</span><span class="p">,</span><span class="s2">&quot;DENOMID&quot;</span><span class="p">,</span><span class="s2">&quot;PAYTABLE&quot;</span><span class="p">,</span><span class="s2">&quot;PLAYERID&quot;</span><span class="p">,</span><span class="s2">&quot;AREAID&quot;</span><span class="p">,</span><span class="s2">&quot;LOCATION&quot;</span><span class="p">,</span><span class="s2">&quot;CURRENCYID&quot;</span><span class="p">,</span><span class="s2">&quot;CUSTOMER&quot;</span><span class="p">,</span><span class="s2">&quot;BATCH_ID&quot;</span><span class="p">,</span><span class="s2">&quot;SORTPRIORITY&quot;</span><span class="p">,</span><span class="s2">&quot;ISCASHOUT&quot;</span><span class="p">,</span><span class="s2">&quot;ISCASHIN&quot;</span><span class="p">,</span><span class="s2">&quot;SESSIONSTART&quot;</span><span class="p">,</span><span class="s2">&quot;SESSIONSTATE&quot;</span><span class="p">,</span><span class="s2">&quot;SESSIONNUMBER&quot;</span><span class="p">,</span><span class="s2">&quot;NEXTTIMESTAMPDELTA&quot;</span><span class="p">,</span><span class="s2">&quot;PREVTIMESTAMPDELTA&quot;</span><span class="p">,</span><span class="s2">&quot;ISNEXTTIMETHRESHOLDMET&quot;</span><span class="p">,</span><span class="s2">&quot;ISPREVTIMETHRESHOLDMET&quot;</span><span class="p">,</span><span class="s2">&quot;UNIQUESESSIONID&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initiated: writing data into fm_curated table&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">validFinalDf</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">validFinalDf</span><span class="o">.</span><span class="n">sessionid</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+    <span class="n">validFinalDf</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s1">&#39;append&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">saveAsTable</span><span class="p">(</span><span class="s1">&#39;RAW.FM_CURATED&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Completed: Save of curated data&quot;</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="execute"><a class="viewcode-back" href="../../dags/preprocessing.html#preprocessing.fm_data_segregation.execute">[docs]</a><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="n">CustomerName</span><span class="p">,</span><span class="n">batchId</span><span class="p">):</span>
+    <span class="k">if</span><span class="p">((</span><span class="n">CustomerName</span> <span class="o">==</span> <span class="kc">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">CustomerName</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">batchId</span> <span class="o">==</span> <span class="kc">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">batchId</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Invalid CustomerName name or batchId&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">exec_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">init_config</span><span class="p">()</span>
+
+    <span class="c1">#region initialize session</span>
+    
+    <span class="n">CONNECTION_PARAMETERS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;account&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;account&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;schema&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;database&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;warehouse&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;warehouse&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;role&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;role&#39;</span><span class="p">),</span>
+    <span class="p">}</span>
+    
+    <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">configs</span><span class="p">(</span><span class="n">CONNECTION_PARAMETERS</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+    
+    <span class="c1">#endregion initialize session</span>
+    
+    <span class="c1"># check if records already exist in PD_CURATED table before processing</span>
+    <span class="n">curatedDf</span> <span class="o">=</span> <span class="n">fetchCuratedSessionsByBatchId</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">batchId</span><span class="p">,</span> <span class="n">CustomerName</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; fetchCuratedSessionsByBatchId function completed&quot;</span><span class="p">)</span>
+    
+    <span class="n">fm_sorted</span><span class="o">=</span><span class="n">prioritized_sort_fm</span><span class="p">(</span><span class="n">curatedDf</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; prioritized_sort_fm function completed&quot;</span><span class="p">)</span>
+
+    <span class="n">fm_sorted</span><span class="o">=</span><span class="n">fetch_invalid_sessions</span><span class="p">(</span><span class="n">fm_sorted</span><span class="p">,</span> <span class="n">batchId</span><span class="p">,</span> <span class="n">CustomerName</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; fetch_invalid_sessions function completed&quot;</span><span class="p">)</span>
+
+    <span class="c1"># fm_sorted=cashout_invalid_sessions(fm_sorted, batchId, CustomerName)</span>
+    <span class="c1"># print(&quot; cashout_invalid_sessions function completed&quot;)</span>
+
+    <span class="n">fm_sorted</span><span class="o">=</span><span class="n">cashin_position_invalid_sessions</span><span class="p">(</span><span class="n">fm_sorted</span><span class="p">,</span> <span class="n">batchId</span><span class="p">,</span> <span class="n">CustomerName</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; cashin_position_invalid_sessions function completed&quot;</span><span class="p">)</span>
+
+    <span class="n">stm_w_check</span><span class="p">(</span><span class="n">fm_sorted</span><span class="p">,</span> <span class="n">batchId</span><span class="p">,</span> <span class="n">CustomerName</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; stm_w_check function completed&quot;</span><span class="p">)</span>
+
+    <span class="n">check_valid_wager_pair_for_intensity</span><span class="p">(</span><span class="n">fm_sorted</span><span class="p">,</span> <span class="n">batchId</span><span class="p">,</span> <span class="n">CustomerName</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Completed invalidating sessions with less than 1 valid pairs of wager in a session&#39;</span><span class="p">)</span>
+
+    <span class="c1"># fm_sorted=creditmeter_invalid_sessions(fm_sorted, batchId, CustomerName)</span>
+    <span class="c1"># print(&quot; creditmeter_invalid_sessions function completed&quot;)</span>
+
+    <span class="n">curated_data_load</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="n">batchId</span><span class="p">,</span><span class="n">CustomerName</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; curated_data_load function completed&quot;</span><span class="p">)</span>
+
+    <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">exec_end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">exec_total_time</span> <span class="o">=</span> <span class="n">exec_end_time</span> <span class="o">-</span> <span class="n">exec_start_time</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total time taken: &quot;</span><span class="p">,</span> <span class="n">exec_total_time</span><span class="p">)</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Unit test batch ids</span>
+    <span class="n">testBatchId</span> <span class="o">=</span> <span class="s1">&#39;f72fbf50-996b-45a4-b029-a477bf824c04&#39;</span>
+    <span class="c1"># testBatchId = None</span>
+    <span class="c1"># testBatchId = &#39;&#39;</span>
+    <span class="n">CustomerName</span> <span class="o">=</span> <span class="s1">&#39;uil&#39;</span>
+    <span class="n">execute</span><span class="p">(</span><span class="n">CustomerName</span><span class="p">,</span><span class="n">testBatchId</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Center of Data Excellence.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

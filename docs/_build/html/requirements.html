@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Requirements &mdash; CoDE Documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cData Sync" href="software-doc/cdata.html" />
+    <link rel="prev" title="Setup your environment" href="how-to/setup.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CoDE Documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">FM Scripts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="dags/cdm_conversion.html">CDM Conversion Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dags/ingestion.html">Ingestion Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dags/preprocessing.html">Preprocessing Script</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="how-to/setup.html">Setup your environment</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Code Requirements</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Software Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="software-doc/cdata.html">cData Sync</a></li>
+<li class="toctree-l1"><a class="reference internal" href="software-doc/azure-sso.html">Azure SSO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Airflow</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="airflow-doc/deploy.html">Deploy Airflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="airflow-doc/doc.html">Restart Airflow</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CoDE Documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Code Requirements</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/requirements.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="code-requirements">
+<h1>Code Requirements<a class="headerlink" href="#code-requirements" title="Permalink to this heading"></a></h1>
+<p>The criteria outlined represent the essential requirements that the code needs to fulfill for successful execution and optimal performance.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">pip</span> <span class="n">install</span> <span class="n">pep8</span>
+<span class="linenos">2</span><span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">upgrade</span> <span class="n">pep8</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1"># Example following PEP8 style guide</span>
+<span class="linenos"> 2</span><span class="k">def</span> <span class="nf">calculate_avg</span><span class="p">(</span><span class="n">numbers</span><span class="p">):</span>
+<span class="linenos"> 3</span>    <span class="c1"># use Descriptive variable names</span>
+<span class="linenos"> 4</span>    <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span>
+<span class="linenos"> 5</span>    <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span>    <span class="c1"># Spaces in between symbols. Ex: &gt;, &lt;, &gt;=, # etc...</span>
+<span class="linenos"> 8</span>    <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+<span class="linenos"> 9</span>        <span class="c1">#Caculate average if there are elements in the list</span>
+<span class="linenos">10</span>        <span class="n">average</span> <span class="o">=</span> <span class="n">total</span> <span class="o">/</span> <span class="n">count</span>
+<span class="linenos">11</span>        <span class="k">return</span> <span class="n">average</span>
+<span class="linenos">12</span>    <span class="k">else</span><span class="p">:</span>
+<span class="linenos">13</span>        <span class="c1">#return None if the list is empty</span>
+<span class="linenos">14</span>        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><dl class="simple">
+<dt>PEP8</dt><dd><ul>
+<li><p>Readability: Enforces consistent and clear coding style. Easier for developers to understand and maintain</p></li>
+<li><p>Provides a standard set of conventions that Python programmers can follow. Making it easier to collaborate</p></li>
+<li><dl class="simple">
+<dt>Tools and automation such as Black 23.3.0 (python install package) can automatically check your code for style violations.</dt><dd><ul>
+<li><p>I beleive VS Code has an extension that will automatically do this if run say python black myfile.py</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>Using PEP8 can help codebase evolve and grow over time.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Docstring/Google Docstring</dt><dd><ul>
+<li><p>Both are the same, however, I personally think Google docstring is cleaner.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1"># This is Docstring</span>
+<span class="linenos"> 2</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 3</span><span class="sd">Return the difference in days between the current date and game release date.</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="sd">Parameter</span>
+<span class="linenos"> 6</span><span class="sd">---------</span>
+<span class="linenos"> 7</span><span class="sd">date : str</span>
+<span class="linenos"> 8</span><span class="sd">    Release date in string format.</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="sd">Returns</span>
+<span class="linenos">11</span><span class="sd">-------</span>
+<span class="linenos">12</span><span class="sd">int64</span>
+<span class="linenos">13</span><span class="sd">    Integer difference in days.</span>
+<span class="linenos">14</span><span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span> <span class="c1"># Google docstring</span>
+<span class="linenos">2</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Return the difference in days between the current date and game release date.</span>
+<span class="linenos">3</span>
+<span class="linenos">4</span><span class="sd">Args:</span>
+<span class="linenos">5</span><span class="sd">    date (str): Release date in string format.</span>
+<span class="linenos">6</span>
+<span class="linenos">7</span><span class="sd">Returns:</span>
+<span class="linenos">8</span><span class="sd">    int64: Integer difference in days.</span>
+<span class="linenos">9</span><span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="how-to/setup.html" class="btn btn-neutral float-left" title="Setup your environment" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="software-doc/cdata.html" class="btn btn-neutral float-right" title="cData Sync" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Center of Data Excellence.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

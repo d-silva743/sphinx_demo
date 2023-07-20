@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restart Airflow &mdash; CoDE Documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Deploy Airflow" href="deploy.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            CoDE Documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">FM Scripts</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../dags/cdm_conversion.html">CDM Conversion Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dags/ingestion.html">Ingestion Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dags/preprocessing.html">Preprocessing Script</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/setup.html">Setup your environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirements.html">Code Requirements</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Software Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../software-doc/cdata.html">cData Sync</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../software-doc/azure-sso.html">Azure SSO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Airflow</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Deploy Airflow</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Restart Airflow</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CoDE Documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Restart Airflow</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/airflow-doc/doc.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="restart-airflow">
+<h1>Restart Airflow<a class="headerlink" href="#restart-airflow" title="Permalink to this heading"></a></h1>
+<p># How to restart airflow scheduler and airflow webserver processes running in the Dev EC2 Linux instance and push them to background</p>
+<p>### Reboot the Dev EC2 instance from the AWS Management Console</p>
+<p>![EC2 instance reboot](BIT_AGILISIUM/docs/images/snap-ec2-instance-reboot.png)</p>
+<p>## Execute the following commands in sequence</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">$</span> <span class="pre">airflow</span> <span class="pre">scheduler</span> <span class="pre">&amp;</span>
+<span class="pre">$</span> <span class="pre">jobs</span>
+<span class="pre">$</span> <span class="pre">airflow</span> <span class="pre">webserver</span> <span class="pre">&amp;</span>
+<span class="pre">$</span> <span class="pre">jobs</span>
+<span class="pre">$</span> <span class="pre">disown</span> <span class="pre">-h</span> <span class="pre">%1</span>
+<span class="pre">$</span> <span class="pre">jobs</span>
+<span class="pre">$</span> <span class="pre">disown</span> <span class="pre">-h</span> <span class="pre">%2</span>
+<span class="pre">`</span></code></p>
+<p>## If the latest changes in the DAGs are not reflected, try deleting the old log files</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">$</span> <span class="pre">sudo</span> <span class="pre">rm</span> <span class="pre">airflow-scheduler.err</span>&#160; <span class="pre">airflow-scheduler.pid</span> <span class="pre">airflow-scheduler.log</span> <span class="pre">airflow-webserver.err</span>&#160; <span class="pre">airflow-webserver-monitor.pid</span> <span class="pre">airflow-webserver.log</span>
+<span class="pre">`</span></code></p>
+<p>## If you’re facing issues logging into the default admin user post restart</p>
+<p>Airflow v2.5 and above no longer create the default admin user with password. Which means even after the webserver is up and running you might still not be able to login to it using a previous credential or the standalone passwork you got standalone_admin_password.txt file in the airflow home folder.</p>
+<p>Use the below command to create a new user with Admin privileges to solve this</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">$</span> <span class="pre">airflow</span> <span class="pre">users</span> <span class="pre">create</span> <span class="pre">-e</span> <span class="pre">anand.thanumalayan&#64;agilisium.com</span> <span class="pre">-f</span> <span class="pre">Anand</span> <span class="pre">-l</span> <span class="pre">Thanumalayan</span> <span class="pre">-p</span> <span class="pre">your_password</span> <span class="pre">-r</span> <span class="pre">Admin</span> <span class="pre">-u</span> <span class="pre">admin_anand</span>
+<span class="pre">`</span></code></p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="deploy.html" class="btn btn-neutral float-left" title="Deploy Airflow" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Center of Data Excellence.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Preprocessing Script &mdash; CoDE Documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Setup your environment" href="../how-to/setup.html" />
+    <link rel="prev" title="Ingestion Script" href="ingestion.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            CoDE Documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">FM Scripts</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="cdm_conversion.html">CDM Conversion Script</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ingestion.html">Ingestion Script</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Preprocessing Script</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-preprocessing.fm_data_segregation">preprocessing.fm_data_segregation module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_data_segregation.cashin_position_invalid_sessions"><code class="docutils literal notranslate"><span class="pre">cashin_position_invalid_sessions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_data_segregation.check_valid_wager_pair_for_intensity"><code class="docutils literal notranslate"><span class="pre">check_valid_wager_pair_for_intensity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_data_segregation.curated_data_load"><code class="docutils literal notranslate"><span class="pre">curated_data_load()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_data_segregation.execute"><code class="docutils literal notranslate"><span class="pre">execute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_data_segregation.fetchCuratedSessionsByBatchId"><code class="docutils literal notranslate"><span class="pre">fetchCuratedSessionsByBatchId()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_data_segregation.fetch_invalid_sessions"><code class="docutils literal notranslate"><span class="pre">fetch_invalid_sessions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_data_segregation.init_config"><code class="docutils literal notranslate"><span class="pre">init_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_data_segregation.prioritized_sort_fm"><code class="docutils literal notranslate"><span class="pre">prioritized_sort_fm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_data_segregation.stm_w_check"><code class="docutils literal notranslate"><span class="pre">stm_w_check()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-preprocessing.fm_sessionization">preprocessing.fm_sessionization module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_sessionization.calcTimeAndCreditThresholds"><code class="docutils literal notranslate"><span class="pre">calcTimeAndCreditThresholds()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_sessionization.demarcateSessionStartAndEnds"><code class="docutils literal notranslate"><span class="pre">demarcateSessionStartAndEnds()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_sessionization.execute"><code class="docutils literal notranslate"><span class="pre">execute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_sessionization.fetchRawDf"><code class="docutils literal notranslate"><span class="pre">fetchRawDf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_sessionization.forwardFillSessionIds"><code class="docutils literal notranslate"><span class="pre">forwardFillSessionIds()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_sessionization.generateSessionNumbers"><code class="docutils literal notranslate"><span class="pre">generateSessionNumbers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_sessionization.generateUniqueSessionIds"><code class="docutils literal notranslate"><span class="pre">generateUniqueSessionIds()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_sessionization.init_config"><code class="docutils literal notranslate"><span class="pre">init_config()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preprocessing.fm_sessionization.saveSessionizedData"><code class="docutils literal notranslate"><span class="pre">saveSessionizedData()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#preprocessing-sessionisation-script-module">preprocessing.sessionisation_script module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-preprocessing">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/setup.html">Setup your environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../requirements.html">Code Requirements</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Software Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../software-doc/cdata.html">cData Sync</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../software-doc/azure-sso.html">Azure SSO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Airflow</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../airflow-doc/deploy.html">Deploy Airflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../airflow-doc/doc.html">Restart Airflow</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CoDE Documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Preprocessing Script</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/dags/preprocessing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="preprocessing-script">
+<h1>Preprocessing Script<a class="headerlink" href="#preprocessing-script" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-preprocessing.fm_data_segregation">
+<span id="preprocessing-fm-data-segregation-module"></span><h2>preprocessing.fm_data_segregation module<a class="headerlink" href="#module-preprocessing.fm_data_segregation" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_data_segregation.cashin_position_invalid_sessions">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_data_segregation.</span></span><span class="sig-name descname"><span class="pre">cashin_position_invalid_sessions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fm_sorted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CustomerName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_data_segregation.html#cashin_position_invalid_sessions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_data_segregation.cashin_position_invalid_sessions" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_data_segregation.check_valid_wager_pair_for_intensity">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_data_segregation.</span></span><span class="sig-name descname"><span class="pre">check_valid_wager_pair_for_intensity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fm_sorted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CustomerName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_data_segregation.html#check_valid_wager_pair_for_intensity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_data_segregation.check_valid_wager_pair_for_intensity" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_data_segregation.curated_data_load">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_data_segregation.</span></span><span class="sig-name descname"><span class="pre">curated_data_load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CustomerName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_data_segregation.html#curated_data_load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_data_segregation.curated_data_load" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_data_segregation.execute">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_data_segregation.</span></span><span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CustomerName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_data_segregation.html#execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_data_segregation.execute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_data_segregation.fetchCuratedSessionsByBatchId">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_data_segregation.</span></span><span class="sig-name descname"><span class="pre">fetchCuratedSessionsByBatchId</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CustomerName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_data_segregation.html#fetchCuratedSessionsByBatchId"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_data_segregation.fetchCuratedSessionsByBatchId" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_data_segregation.fetch_invalid_sessions">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_data_segregation.</span></span><span class="sig-name descname"><span class="pre">fetch_invalid_sessions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fm_sorted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CustomerName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_data_segregation.html#fetch_invalid_sessions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_data_segregation.fetch_invalid_sessions" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_data_segregation.init_config">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_data_segregation.</span></span><span class="sig-name descname"><span class="pre">init_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_data_segregation.html#init_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_data_segregation.init_config" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_data_segregation.prioritized_sort_fm">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_data_segregation.</span></span><span class="sig-name descname"><span class="pre">prioritized_sort_fm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curatedDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_data_segregation.html#prioritized_sort_fm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_data_segregation.prioritized_sort_fm" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_data_segregation.stm_w_check">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_data_segregation.</span></span><span class="sig-name descname"><span class="pre">stm_w_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fm_sorted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CustomerName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_data_segregation.html#stm_w_check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_data_segregation.stm_w_check" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-preprocessing.fm_sessionization">
+<span id="preprocessing-fm-sessionization-module"></span><h2>preprocessing.fm_sessionization module<a class="headerlink" href="#module-preprocessing.fm_sessionization" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.calcTimeAndCreditThresholds">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">calcTimeAndCreditThresholds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rawDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_sessionization.html#calcTimeAndCreditThresholds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.calcTimeAndCreditThresholds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.demarcateSessionStartAndEnds">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">demarcateSessionStartAndEnds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeAndCreditStatusDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_sessionization.html#demarcateSessionStartAndEnds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.demarcateSessionStartAndEnds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.execute">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">customerName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_sessionization.html#execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.execute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.fetchRawDf">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">fetchRawDf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">customerName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_sessionization.html#fetchRawDf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.fetchRawDf" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.forwardFillSessionIds">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">forwardFillSessionIds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uniqueSessionIdDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_sessionization.html#forwardFillSessionIds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.forwardFillSessionIds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.generateSessionNumbers">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">generateSessionNumbers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sessionStatesDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_sessionization.html#generateSessionNumbers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.generateSessionNumbers" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.generateUniqueSessionIds">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">generateUniqueSessionIds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sessNumDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_sessionization.html#generateUniqueSessionIds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.generateUniqueSessionIds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.init_config">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">init_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_sessionization.html#init_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.init_config" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.saveSessionizedData">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">saveSessionizedData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sessionizedDf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">customerName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/preprocessing/fm_sessionization.html#saveSessionizedData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.saveSessionizedData" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="preprocessing-sessionisation-script-module">
+<h2>preprocessing.sessionisation_script module<a class="headerlink" href="#preprocessing-sessionisation-script-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-preprocessing">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-preprocessing" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ingestion.html" class="btn btn-neutral float-left" title="Ingestion Script" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../how-to/setup.html" class="btn btn-neutral float-right" title="Setup your environment" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Center of Data Excellence.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
