@@ -52,3 +52,19 @@ def hello_world():
     Return:
         None
     """
+
+    print("Hello")
+
+def add(x, y):
+
+    """
+    Add two numbers together
+
+    Args:
+        Float or Int
+
+    Return:
+        Float or Int
+    """
+
+    return x + y
