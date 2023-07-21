@@ -32,7 +32,7 @@ jobs:
           cd docs
           make clean
           make html
-          mv _build/html $GITHUB_WORKSPACE/docs/_build/html
+          mv _build/html $GITHUB_WORKSPACE/gh-pages
 
       - name: Remove the venv folder
         run: |
