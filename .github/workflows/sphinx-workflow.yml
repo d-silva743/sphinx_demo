@@ -35,7 +35,7 @@ jobs:
           make clean
           make html
 
-      - name: Remove the venv folder.
+      - name: Remove the venv folder
         run: |
           rm -rf venv
 
