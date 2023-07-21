@@ -55,11 +55,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Create 'gh-pages' branch
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: |
+          git checkout --orphan gh-pages
+          git rm -rf .
+          git commit --allow-empty -m "Initial commit"
+          git push origin gh-pages
+
+      - name: Deploy
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          publish_branch: main
+          publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: _build/
-          force_orphan: true
