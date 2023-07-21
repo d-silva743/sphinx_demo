@@ -35,6 +35,10 @@ jobs:
           make clean
           make html
 
+      - name: Remove the venv folder
+        run: |
+          rm -rf venv
+
       - name: Commit and Push Changes
         run: |
           git config --local user.name "d-silva743"
@@ -42,7 +46,3 @@ jobs:
           git add .
           git commit -m "Update documentation"
           git push
-
-      - name: Remove the venv folder.
-        run: |
-          rm -rf venv
