@@ -44,7 +44,7 @@ def init_config():
 
 def hello_world():
     """
-    This function is empty
+    This function is empty.
 
     Args:
         None
