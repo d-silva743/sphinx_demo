@@ -2,7 +2,8 @@ name: Sphinx Documentation Generator.
 
 on:
   release:
-    types: [created, published, edited]
+    types: [created]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -58,6 +59,7 @@ jobs:
           path: ./gh-pages # Download the artifact to the gh-pages directory in deploy job.
 
       - name: Deploy to GitHub Pages
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         uses: peaceiris/actions-gh-pages@v3
         with:
           publish_dir: ./gh-pages # Use the gh-pages directory as the source for GitHub Pages.
