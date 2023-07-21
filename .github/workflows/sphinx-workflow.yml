@@ -32,27 +32,19 @@ jobs:
           cd docs
           make clean
           make html
+          mv _build/html $GITHUB_WORKSPACE/docs/_build/html
 
       - name: Remove the venv folder
         run: |
           rm -rf venv
 
-      - name: Commit and Push Changes
-        run: |
-          git config --local user.name "d-silva743"
-          git config --local user.email "dom.silva@igt.com"
-          git add .
-          git commit -m "Update documentation"
-          git push
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
 
-      - name: Copy HTML files to gh-pages branch
-        run: |
-          git checkout --orphan gh-pages
-          git rm -rf .
-          cp -R docs/_build/html
-          git add .
-          git commit -m "Publish documentation to gh-pages branch"
-          git push -f origin gh-pages
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Deploy to GitHub Pages
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
@@ -60,4 +52,5 @@ jobs:
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: $GITHUB_WORKSPACE/docs/_build/html
           force_orphan: true
