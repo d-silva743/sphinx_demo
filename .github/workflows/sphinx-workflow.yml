@@ -32,7 +32,12 @@ jobs:
           cd docs
           make clean
           make html
-          mv _build/html $GITHUB_WORKSPACE/gh-pages
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: html
+          path: docs/_build/html/* # Upload contents of the docs/_build/html directory.
 
       - name: Remove the venv folder
         run: |
@@ -50,13 +55,13 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: html
-          path: gh-pages
+          path: ./gh-pages # Download the artifact to the gh-pages directory in deploy job.
 
       - name: Deploy to GitHub Pages
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         uses: peaceiris/actions-gh-pages@v3
         with:
-          publish_dir: ./gh-pages
+          publish_dir: ./gh-pages # Use the gh-pages directory as the source for GitHub Pages.
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
           force_orphan: true
