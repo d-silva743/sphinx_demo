@@ -18,7 +18,7 @@ def init_config():
     This function does nothing.
 
     Args:
-        None
+        None.
 
     Return:
         None
@@ -46,20 +46,6 @@ def hello_world():
     """
 
     print("Hello")
-
-
-def add(x, y):
-    """
-    Add two numbers together
-
-    Args:
-        Float or Int
-
-    Return:
-        Float or Int
-    """
-
-    return x + y
 
 
 def sub(x, y):

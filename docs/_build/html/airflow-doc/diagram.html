@@ -7,6 +7,7 @@
   <title>Diagram &mdash; CoDE Documentation 1.0.0 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_charts/charts.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -16,6 +17,9 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/sphinx_highlight.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-svg.js"></script>
+        <script src="../_static/sphinx_charts/plotly/plotly-2.11.1.min.js"></script>
+        <script src="../_static/sphinx_charts/charts.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -113,45 +117,15 @@
 </tr>
 </tbody>
 </table>
-<blockquote>
-<div><dl class="field-list">
-<dt class="field-odd">align<span class="colon">:</span></dt>
-<dd class="field-odd"><p>center</p>
-<p>blockdiag {
-// standard node shapes
-box [shape = box];
-square [shape = square];
-roundedbox [shape = roundedbox];
-dots [shape = dots];</p>
-<p>circle [shape = circle];
-ellipse [shape = ellipse];
-diamond [shape = diamond];
-minidiamond [shape = minidiamond];</p>
-<p>note [shape = note];
-mail [shape = mail];
-cloud [shape = cloud];
-actor [shape = actor];</p>
-<p>beginpoint [shape = beginpoint];
-endpoint [shape = endpoint];</p>
-<p>box -&gt; square -&gt; roundedbox -&gt; dots;
-circle -&gt; ellipse -&gt; diamond -&gt; minidiamond;
-note -&gt; mail -&gt; cloud -&gt; actor;
-beginpoint -&gt; endpoint;</p>
-<p>// node shapes for flowcharts
-condition [shape = flowchart.condition];
-database [shape = flowchart.database];
-terminator [shape = flowchart.terminator];
-input [shape = flowchart.input];</p>
-<p>loopin [shape = flowchart.loopin];
-loopout [shape = flowchart.loopout];</p>
-<p>condition -&gt; database -&gt; terminator -&gt; input;
-loopin -&gt; loopout;
-}</p>
-</dd>
-</dl>
-</div></blockquote>
-<hr class="docutils" />
-<div class="align-center"><img height="360" src="../_images/blockdiag-d2f1531e596b7838bdf5556bb91badf4d605c602.png" width="640" /></div>
+<div class="sphinx-charts docutils container" id="id1">
+<div class="sphinx-charts-chart sphinx-charts-chart-id-0 sphinx-charts-chart-uri-../_charts/images/test.json sphinx-charts-chart-dn-chart docutils container" id="sphinx-charts-chart-id-0">
+</div>
+<p class="sphinx-charts-hidden"></p>
+<div class="sphinx-charts-placeholder sphinx-charts-placeholder-0 docutils container" id="id2">
+<p><span class="caption-text">Loading…</span></p>
+</div>
+<p><span class="caption-text">This is the caption of the chart</span></p>
+</div>
 </section>
 
 

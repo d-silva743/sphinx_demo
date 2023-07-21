@@ -26,6 +26,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinxcontrib.blockdiag",
     "sphinxcontrib.plantuml",
+    "sphinx_charts.charts",
 ]
 
 templates_path = ["_templates"]

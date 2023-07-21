@@ -13,3 +13,4 @@ sphinx-rtd-theme
 pre-commit
 sphinxcontrib-plantuml
 sphinxcontrib-blockdiag
+sphinx-charts
