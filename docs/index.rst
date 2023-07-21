@@ -49,7 +49,6 @@ to be your reliable assistant, empowering you to maximize the value you get from
    :hidden:
    :caption: Misc.
 
-   software-doc/cdata
 
 
 
