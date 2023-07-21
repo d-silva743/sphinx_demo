@@ -18,10 +18,10 @@ def init_config():
     This function does nothing.
 
     Args:
-        None.
+        name
 
     Return:
-        None
+        prints out name
     """
 
     config = configparser.ConfigParser()
@@ -50,7 +50,7 @@ def hello_world():
 
 def sub(x, y):
     """
-    Substract two numbers together
+    Substract two numbers
 
     Args:
         Float or Int
