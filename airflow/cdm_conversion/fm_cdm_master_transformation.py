@@ -1,5 +1,5 @@
 """
-Test
+This is a workflow test
 """
 
 from snowflake.snowpark.session import Session
@@ -41,3 +41,14 @@ def init_config():
     config.read(config_file_path)
 
     return config
+
+def hello_world():
+    """
+    This function is empty
+
+    Args:
+        None
+    
+    Return:
+        None
+    """

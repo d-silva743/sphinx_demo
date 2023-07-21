@@ -16,7 +16,7 @@ to be your reliable assistant, empowering you to maximize the value you get from
 .. toctree::
    :maxdepth: 2
    :hidden:
-   :caption: Codebase
+   :caption: Github Codebase
 
    modules
 
