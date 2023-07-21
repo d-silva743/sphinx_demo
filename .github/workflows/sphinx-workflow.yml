@@ -45,5 +45,4 @@ jobs:
 
       - name: Remove the venv folder
         run: |
-          deactivate  # Deactivate the virtual environment if currently active
           rm -rf venv
