@@ -108,14 +108,14 @@
 <span class="c1"># import common.utils.definitions as defi</span>
 
 
-<div class="viewcode-block" id="init_config"><a class="viewcode-back" href="../../dags/ingestion.html#ingestion.fm_s3_snowflake.init_config">[docs]</a><span class="k">def</span> <span class="nf">init_config</span><span class="p">():</span>
+<div class="viewcode-block" id="init_config"><a class="viewcode-back" href="../../ingestion.html#ingestion.fm_s3_snowflake.init_config">[docs]</a><span class="k">def</span> <span class="nf">init_config</span><span class="p">():</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
     <span class="n">parentFolderPath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
     <span class="n">config_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parentFolderPath</span><span class="p">,</span> <span class="s1">&#39;common/utils&#39;</span><span class="p">,</span> <span class="s1">&#39;config.ini&#39;</span><span class="p">)</span>
     <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_file_path</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">config</span></div>
 
-<div class="viewcode-block" id="list_query"><a class="viewcode-back" href="../../dags/ingestion.html#ingestion.fm_s3_snowflake.list_query">[docs]</a><span class="k">def</span> <span class="nf">list_query</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="n">table_name</span><span class="p">):</span>
+<div class="viewcode-block" id="list_query"><a class="viewcode-back" href="../../ingestion.html#ingestion.fm_s3_snowflake.list_query">[docs]</a><span class="k">def</span> <span class="nf">list_query</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="n">table_name</span><span class="p">):</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Testing autodoc</span>
@@ -181,7 +181,7 @@
 <span class="c1">#         raise error    </span>
 <span class="c1">#     return s3_location,dag_status,path_lst</span>
 
-<div class="viewcode-block" id="processed_files"><a class="viewcode-back" href="../../dags/ingestion.html#ingestion.fm_s3_snowflake.processed_files">[docs]</a><span class="k">def</span> <span class="nf">processed_files</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="n">path_lst</span><span class="p">,</span><span class="n">s3_location</span><span class="p">):</span>
+<div class="viewcode-block" id="processed_files"><a class="viewcode-back" href="../../ingestion.html#ingestion.fm_s3_snowflake.processed_files">[docs]</a><span class="k">def</span> <span class="nf">processed_files</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="n">path_lst</span><span class="p">,</span><span class="n">s3_location</span><span class="p">):</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="c1">#  STEP 2 finding the list files that are already proceed and exluding them from current files to be processed list</span>
@@ -214,7 +214,7 @@
 
     <span class="k">return</span> <span class="n">s3_location</span><span class="p">,</span><span class="n">dag_status</span><span class="p">,</span><span class="n">path_lst</span></div>
 
-<div class="viewcode-block" id="fetchBatchIdsToPreprocess"><a class="viewcode-back" href="../../dags/ingestion.html#ingestion.fm_s3_snowflake.fetchBatchIdsToPreprocess">[docs]</a><span class="k">def</span> <span class="nf">fetchBatchIdsToPreprocess</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="n">path_lst</span><span class="p">,</span><span class="n">s3_location</span><span class="p">):</span>
+<div class="viewcode-block" id="fetchBatchIdsToPreprocess"><a class="viewcode-back" href="../../ingestion.html#ingestion.fm_s3_snowflake.fetchBatchIdsToPreprocess">[docs]</a><span class="k">def</span> <span class="nf">fetchBatchIdsToPreprocess</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="n">path_lst</span><span class="p">,</span><span class="n">s3_location</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;printing fetchBatchIdsToPreprocess function started&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">path_lst</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">fl</span> <span class="ow">in</span> <span class="n">path_lst</span><span class="p">:</span>
@@ -245,7 +245,7 @@
     <span class="k">return</span> <span class="n">s3_location</span><span class="p">,</span><span class="n">path_lst</span>  </div>
    
 
-<div class="viewcode-block" id="timestamp"><a class="viewcode-back" href="../../dags/ingestion.html#ingestion.fm_s3_snowflake.timestamp">[docs]</a><span class="k">def</span> <span class="nf">timestamp</span><span class="p">(</span><span class="n">path_lst</span><span class="p">,</span><span class="n">session</span><span class="p">,</span><span class="n">batchId</span><span class="p">):</span>
+<div class="viewcode-block" id="timestamp"><a class="viewcode-back" href="../../ingestion.html#ingestion.fm_s3_snowflake.timestamp">[docs]</a><span class="k">def</span> <span class="nf">timestamp</span><span class="p">(</span><span class="n">path_lst</span><span class="p">,</span><span class="n">session</span><span class="p">,</span><span class="n">batchId</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">path_lst</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">fl</span> <span class="ow">in</span> <span class="n">path_lst</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -286,7 +286,7 @@
             <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">error</span></div>
         
-<div class="viewcode-block" id="execute"><a class="viewcode-back" href="../../dags/ingestion.html#ingestion.fm_s3_snowflake.execute">[docs]</a><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">batchId</span><span class="p">):</span>
+<div class="viewcode-block" id="execute"><a class="viewcode-back" href="../../ingestion.html#ingestion.fm_s3_snowflake.execute">[docs]</a><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">batchId</span><span class="p">):</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">init_config</span><span class="p">()</span>
 
     <span class="n">CONNECTION_PARAMETERS</span> <span class="o">=</span> <span class="p">{</span>
