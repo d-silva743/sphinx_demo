@@ -46,11 +46,11 @@ jobs:
           git config --local user.email "dom.silva@igt.com"
           git add .
           git commit -m "Update documentation"
-          git push
+          git push origin main
 
       - name: Deploy Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/_build/html
+          publish_dir: docs
