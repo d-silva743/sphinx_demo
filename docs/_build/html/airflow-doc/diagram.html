@@ -93,12 +93,65 @@
              
   <section id="diagram">
 <h1>Diagram<a class="headerlink" href="#diagram" title="Permalink to this heading"></a></h1>
-<figure class="align-center" id="id1">
-<div class="align-default"><a class="reference internal image-reference" href="../_images/blockdiag-38c26f047b7ef38165cd0f0d687b5fb1b8670c33.png"><img height="274.2857142857143" src="../_images/blockdiag-38c26f047b7ef38165cd0f0d687b5fb1b8670c33.png" width="640.0" /></a></div>
-<figcaption>
-<p><span class="caption-text">Style attributes to nodes and edges (Block Diagram example)</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
-</figcaption>
-</figure>
+<div class="align-default"><img height="120" src="../_images/blockdiag-68c909a02df7138f2bffc613eafcc98ebc6b0600.png" width="832" /></div>
+<div class="align-center"><img height="120" src="../_images/blockdiag-4edaf007dc165dc147a367a8dad9ecd382c9cd1d.png" width="640" /></div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>A</p></td>
+<td><p>browsers in each client</p></td>
+</tr>
+<tr class="row-odd"><td><p>B</p></td>
+<td><p>web server</p></td>
+</tr>
+<tr class="row-even"><td><p>C</p></td>
+<td><p>database server</p></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">align<span class="colon">:</span></dt>
+<dd class="field-odd"><p>center</p>
+<p>blockdiag {
+// standard node shapes
+box [shape = box];
+square [shape = square];
+roundedbox [shape = roundedbox];
+dots [shape = dots];</p>
+<p>circle [shape = circle];
+ellipse [shape = ellipse];
+diamond [shape = diamond];
+minidiamond [shape = minidiamond];</p>
+<p>note [shape = note];
+mail [shape = mail];
+cloud [shape = cloud];
+actor [shape = actor];</p>
+<p>beginpoint [shape = beginpoint];
+endpoint [shape = endpoint];</p>
+<p>box -&gt; square -&gt; roundedbox -&gt; dots;
+circle -&gt; ellipse -&gt; diamond -&gt; minidiamond;
+note -&gt; mail -&gt; cloud -&gt; actor;
+beginpoint -&gt; endpoint;</p>
+<p>// node shapes for flowcharts
+condition [shape = flowchart.condition];
+database [shape = flowchart.database];
+terminator [shape = flowchart.terminator];
+input [shape = flowchart.input];</p>
+<p>loopin [shape = flowchart.loopin];
+loopout [shape = flowchart.loopout];</p>
+<p>condition -&gt; database -&gt; terminator -&gt; input;
+loopin -&gt; loopout;
+}</p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<div class="align-center"><img height="360" src="../_images/blockdiag-d2f1531e596b7838bdf5556bb91badf4d605c602.png" width="640" /></div>
 </section>
 
 
