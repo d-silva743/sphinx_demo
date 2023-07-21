@@ -1,3 +1,7 @@
+"""
+Test
+"""
+
 from snowflake.snowpark.session import Session
 from snowflake.snowpark.functions import sproc, col, min, max, avg
 from snowflake.snowpark import functions as F

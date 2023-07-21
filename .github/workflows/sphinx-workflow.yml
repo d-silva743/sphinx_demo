@@ -42,3 +42,8 @@ jobs:
           git add .
           git commit -m "Update documentation"
           git push
+
+      - name: Remove the venv folder
+        run: |
+          deactivate  # Deactivate the virtual environment if currently active
+          rm -rf venv
