@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Setup your environment &mdash; CoDE Documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Code Requirements" href="requirements.html" />
+    <link rel="prev" title="preprocessing package" href="../preprocessing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            CoDE Documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Github Codebase</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Scripts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Setup your environment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#ide">IDE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#anaconda">Anaconda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#airflow">Airflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pip-packages-installation">Pip packages installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#git-installation">Git installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gitlab">Gitlab</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#git-configuration-and-clone">Git configuration and clone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#postgresql">PostgreSQL</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Code Requirements</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Software Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../software-doc/cdata.html">cData Sync</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../software-doc/azure-sso.html">Azure SSO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Airflow</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../airflow-doc/deploy.html">Deploy Airflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../airflow-doc/doc.html">Restart Airflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../airflow-doc/diagram.html">Diagram</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Misc.</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../misc/other.html">Markdown Cheatsheet</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">CoDE Documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Setup your environment</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/how-to/setup.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="setup-your-environment">
+<h1>Setup your environment<a class="headerlink" href="#setup-your-environment" title="Permalink to this heading"></a></h1>
+<section id="ide">
+<h2>IDE<a class="headerlink" href="#ide" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Visual Studio Code</dt><dd><ul>
+<li><p>[Installation URL](<a class="reference external" href="https://code.visualstudio.com/">https://code.visualstudio.com/</a>)</p></li>
+<li><p>Install the required extensions for Python, Git etc.,</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="anaconda">
+<h2>Anaconda<a class="headerlink" href="#anaconda" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Anaconda setup with Python 3.8 and Snowpark</dt><dd><ul>
+<li><p>[Installation URL](<a class="reference external" href="https://www.anaconda.com/products/distribution">https://www.anaconda.com/products/distribution</a>)</p></li>
+<li><p>Create new conda virtual environment with Python 3.8 and Snowpark 1.0 using dependencies file.</p></li>
+<li><dl class="simple">
+<dt>Please use the yaml dependency file <strong>‘venv_conda_snowpark.yaml’</strong> available in this folder. Feel free to change the environment name in the dependencies file if needed.</dt><dd><p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">$</span> <span class="pre">conda</span> <span class="pre">env</span> <span class="pre">create</span> <span class="pre">-f</span> <span class="pre">venv_conda_snowpark.yaml</span>
+<span class="pre">`</span></code></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Activate conda environment and check Python and Snowpark versions</dt><dd><p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">$</span> <span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">virtual_env_name</span>
+<span class="pre">$</span> <span class="pre">python</span> <span class="pre">--version</span>
+<span class="pre">$</span> <span class="pre">pip</span> <span class="pre">--version</span>
+<span class="pre">`</span></code></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>If Pip is not installed</dt><dd><p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">$</span> <span class="pre">python3</span> <span class="pre">-m</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">pip</span>
+<span class="pre">`</span></code></p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="airflow">
+<h2>Airflow<a class="headerlink" href="#airflow" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Airflow quick installation inside conda venv</dt><dd><ul>
+<li><dl class="simple">
+<dt>Activate conda environment created in the previous step, ignore if activated already</dt><dd><p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">$</span> <span class="pre">conda</span> <span class="pre">activate</span> <span class="pre">virtual_env_name</span>
+<span class="pre">`</span></code></p>
+</dd>
+</dl>
+</li>
+<li><p>Follow the steps mentioned in the [official quickstart URL](<a class="reference external" href="https://airflow.apache.org/docs/apache-airflow/stable/start.html">https://airflow.apache.org/docs/apache-airflow/stable/start.html</a>) to install a standalone version of the latest airflow, intended for development purposes.</p></li>
+<li><p>Note: Airflow does not officially support Windows OS, you may need to enable WSL or use Docker for running Airflow dags. You can still run the <cite>.py</cite> files directly for troubleshooting purposes</p></li>
+<li><dl class="simple">
+<dt>Alternatively you can use the below command to quickly install version 2.5.0 of Airflow</dt><dd><p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">$</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;apache-airflow==2.5.0&quot;</span> <span class="pre">--constraint</span> <span class="pre">&quot;https://raw.githubusercontent.com/apache/airflow/constraints-2.5.0/constraints-3.8.txt&quot;</span>
+<span class="pre">`</span></code></p>
+</dd>
+</dl>
+</li>
+<li><p>All airflow commands must be executed from within the Conda virtual environment e.g., <cite>$ airflow standalone</cite> or <cite>$ airflow version</cite> etc.,</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="pip-packages-installation">
+<h2>Pip packages installation<a class="headerlink" href="#pip-packages-installation" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Post successful Airflow installation via pip you can install the other pip packages like Snowpark, Pandas etc., required for compiling the files in the project</p></li>
+<li><dl class="simple">
+<dt>Open terminal and <cite>‘cd’</cite> your way into the <cite>‘docsenvironmentdev’</cite> folder, where the <cite>requirements.txt</cite> reside.</dt><dd><p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">$</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span>
+<span class="pre">`</span></code></p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>&gt; <strong>Troubleshooting</strong>
+- If you face any error like ‘No matching distribution found for snowflake-snowpark-python’, check the pip version to see if its mapped to the right python version. It should not be mapped to site-packages folder from other python versions like <cite>/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/pip (python 3.10)</cite></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">$</span> <span class="pre">pip</span> <span class="pre">--version</span>
+<span class="pre">`</span></code></p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>If you face any dependency resolution related errors in the above step, try</dt><dd><p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">$</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-r</span> <span class="pre">requirements.txt</span> <span class="pre">--use-deprecated=legacy-resolver</span>
+<span class="pre">`</span></code></p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="git-installation">
+<h2>Git installation<a class="headerlink" href="#git-installation" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Git setup - Mac OS</dt><dd><ul>
+<li><dl class="simple">
+<dt>In terminal, execute the following command and follow the steps in the resulting installation wizard</dt><dd><p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">$</span> <span class="pre">xcode-select</span> <span class="pre">--install</span>
+<span class="pre">`</span></code></p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Git setup - Windows</dt><dd><ul>
+<li><p>[Git for Windows installation URL](<a class="reference external" href="https://git-scm.com/download/win">https://git-scm.com/download/win</a>)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="gitlab">
+<h2>Gitlab<a class="headerlink" href="#gitlab" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Get the login credentials with the appropriate contributor permissions</p></li>
+</ul>
+</section>
+<section id="git-configuration-and-clone">
+<h2>Git configuration and clone<a class="headerlink" href="#git-configuration-and-clone" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>In the right source code folder</dt><dd><p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">$</span> <span class="pre">git</span> <span class="pre">config</span> <span class="pre">--global</span> <span class="pre">credential.helper</span> <span class="pre">store</span>
+<span class="pre">$</span> <span class="pre">git</span> <span class="pre">config</span> <span class="pre">--global</span> <span class="pre">user.name</span> <span class="pre">&quot;FIRST_NAME</span> <span class="pre">LAST_NAME&quot;</span>
+<span class="pre">$</span> <span class="pre">git</span> <span class="pre">config</span> <span class="pre">--global</span> <span class="pre">user.email</span> <span class="pre">'emailId'</span>
+<span class="pre">$</span> <span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://gitlab.nbcc.mobi/bit-agilisium/bit_agilisium.git</span>
+<span class="pre">`</span></code></p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="postgresql">
+<h2>PostgreSQL<a class="headerlink" href="#postgresql" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><dl class="simple">
+<dt>PostgreSQL for Mac</dt><dd><ul>
+<li><p>Install Homebrew [URL](<a class="reference external" href="https://brew.sh/">https://brew.sh/</a>) (if needed in localhost)</p></li>
+<li><dl class="simple">
+<dt>In terminal,</dt><dd><p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">$</span> <span class="pre">brew</span> <span class="pre">install</span> <span class="pre">postgresql</span>
+<span class="pre">$</span> <span class="pre">brew</span> <span class="pre">services</span> <span class="pre">list</span>
+<span class="pre">$</span> <span class="pre">brew</span> <span class="pre">services</span> <span class="pre">restart</span> <span class="pre">postgresql</span>
+<span class="pre">$</span> <span class="pre">createuser</span> <span class="pre">-s</span> <span class="pre">postgres</span>
+<span class="pre">`</span></code></p>
+</dd>
+</dl>
+</li>
+<li><p>Install PgAdmin 4 - [URL](<a class="reference external" href="https://www.pgadmin.org/download/">https://www.pgadmin.org/download/</a>)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../preprocessing.html" class="btn btn-neutral float-left" title="preprocessing package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="requirements.html" class="btn btn-neutral float-right" title="Code Requirements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Center of Data Excellence.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

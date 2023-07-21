@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ingestion.fm_s3_snowflake &mdash; CoDE Documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CoDE Documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Github Codebase</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Scripts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/setup.html">Setup your environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/requirements.html">Code Requirements</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Software Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../software-doc/cdata.html">cData Sync</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../software-doc/azure-sso.html">Azure SSO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Airflow</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../airflow-doc/deploy.html">Deploy Airflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../airflow-doc/doc.html">Restart Airflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../airflow-doc/diagram.html">Diagram</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Misc.</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../misc/other.html">Markdown Cheatsheet</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CoDE Documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ingestion.fm_s3_snowflake</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ingestion.fm_s3_snowflake</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">configparser</span>
+<span class="kn">from</span> <span class="nn">snowflake.snowpark</span> <span class="kn">import</span> <span class="n">functions</span> 
+<span class="kn">from</span> <span class="nn">snowflake.snowpark</span> <span class="kn">import</span> <span class="n">Window</span>
+<span class="kn">from</span> <span class="nn">snowflake.snowpark.functions</span> <span class="kn">import</span> <span class="n">col</span><span class="p">,</span> <span class="n">lead</span>
+<span class="kn">from</span> <span class="nn">snowflake.snowpark.session</span> <span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span> <span class="nn">snowflake.snowpark.functions</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="n">literal_eval</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">airflow</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">airflow.exceptions</span> <span class="kn">import</span> <span class="n">AirflowFailException</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">root_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span>
+
+<span class="c1"># Internal imports</span>
+<span class="c1"># import common.utils.definitions as defi</span>
+
+
+<div class="viewcode-block" id="init_config"><a class="viewcode-back" href="../../ingestion.html#ingestion.fm_s3_snowflake.init_config">[docs]</a><span class="k">def</span> <span class="nf">init_config</span><span class="p">():</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+    <span class="n">parentFolderPath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">config_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parentFolderPath</span><span class="p">,</span> <span class="s1">&#39;common/utils&#39;</span><span class="p">,</span> <span class="s1">&#39;config.ini&#39;</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_file_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">config</span></div>
+
+<div class="viewcode-block" id="list_query"><a class="viewcode-back" href="../../ingestion.html#ingestion.fm_s3_snowflake.list_query">[docs]</a><span class="k">def</span> <span class="nf">list_query</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="n">table_name</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Testing autodoc</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        None</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">db_res</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;select CURRENT_DATABASE(),CURRENT_SCHEMA()  &quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">db_res</span><span class="p">)</span>
+        <span class="n">db_res</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">list_query</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;list @FM_S3_STAGE/</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">vlt_files</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">list_query</span><span class="p">)</span>
+        <span class="n">vlt_files</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="c1">#finding the list of files available in S3 Location</span>
+        <span class="n">lst</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">s3_location</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+        <span class="n">vlt_files_list</span><span class="o">=</span><span class="n">vlt_files</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">vlt_files_list</span><span class="p">:</span>
+            <span class="n">flie_name</span><span class="o">=</span><span class="n">i</span><span class="o">.</span><span class="n">name</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">flie_name</span><span class="p">)</span>
+            <span class="n">position_1</span><span class="o">=</span><span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">flie_name</span><span class="p">)</span> <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">s3_location</span><span class="o">=</span><span class="n">flie_name</span><span class="p">[:</span><span class="n">position_1</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;/&#39;</span>
+            <span class="n">new_flie_name</span><span class="o">=</span><span class="n">flie_name</span><span class="p">[</span><span class="n">position_1</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">new_flie_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">new_flie_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
+                <span class="n">lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_flie_name</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;printing lst&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;printing s3_location&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">s3_location</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="c1"># session.close()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;An expection Occured while doing the fetching the file list details 2&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">error</span>
+        
+    <span class="k">return</span> <span class="n">lst</span><span class="p">,</span><span class="n">s3_location</span></div>
+
+<span class="c1"># def admin_log_check(session,path_lst,s3_location):</span>
+<span class="c1">#     # STEP 1 if there are files in-progress, Code exists right here .....</span>
+<span class="c1">#     try:</span>
+<span class="c1">#         inprogress_files_details= session.table(&quot;raw.admin_log&quot;)</span>
+<span class="c1">#         inprogress_files_details=inprogress_files_details.filter((col(&quot;SOURCE_NAME&quot;)==&#39;FM&#39;) &amp; (col(&quot;LOAD_STATUS&quot;)==&#39;Started&#39;)) \</span>
+<span class="c1">#                                                     .select(col(&quot;file_name&quot;)) \</span>
+<span class="c1">#                                                     .distinct()</span>
+<span class="c1">#         inprogress_files=inprogress_files_details.collect()</span>
+<span class="c1">#         dag_status=&#39;proceed&#39;</span>
+<span class="c1">#         # if len(inprogress_files)!=0:</span>
+<span class="c1">#         #     print(&quot;process will be skipped as there are few files in-progress&quot;)</span>
+<span class="c1">#         #     session.close()</span>
+<span class="c1">#         #     dag_status=&#39;skip&#39;</span>
+<span class="c1">#         #     print(dag_status)</span>
+<span class="c1">#         #     # raise AirflowFailException(&#39;Bad run: Please wait till the previous runs succeeds or close the previous run&#39;)</span>
+<span class="c1">#         # else:</span>
+<span class="c1">#         #     dag_status=&#39;proceed&#39;</span>
+<span class="c1">#     except Exception as error:</span>
+<span class="c1">#         session.close()</span>
+<span class="c1">#         print(&quot;An expection Occured while doing the fetching the file list processed details&quot;)</span>
+<span class="c1">#         raise error    </span>
+<span class="c1">#     return s3_location,dag_status,path_lst</span>
+
+<div class="viewcode-block" id="processed_files"><a class="viewcode-back" href="../../ingestion.html#ingestion.fm_s3_snowflake.processed_files">[docs]</a><span class="k">def</span> <span class="nf">processed_files</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="n">path_lst</span><span class="p">,</span><span class="n">s3_location</span><span class="p">):</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1">#  STEP 2 finding the list files that are already proceed and exluding them from current files to be processed list</span>
+        <span class="n">executed_files_details</span><span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;raw.admin_log&quot;</span><span class="p">)</span>
+        <span class="n">executed_files_details</span><span class="o">=</span><span class="n">executed_files_details</span><span class="o">.</span><span class="n">filter</span><span class="p">((</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;SOURCE_NAME&quot;</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;FM&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;LOAD_STATUS&quot;</span><span class="p">)</span><span class="o">==</span><span class="s1">&#39;Completed&#39;</span><span class="p">))</span> \
+                                                    <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;file_name&quot;</span><span class="p">))</span> \
+                                                    <span class="o">.</span><span class="n">distinct</span><span class="p">()</span>
+        <span class="n">executed_files_col_list</span><span class="o">=</span><span class="n">executed_files_details</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+        <span class="n">executed_files_list</span><span class="o">=</span><span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">abc</span> <span class="ow">in</span> <span class="n">executed_files_col_list</span><span class="p">:</span>
+            <span class="n">defg</span><span class="o">=</span><span class="n">abc</span><span class="o">.</span><span class="n">FILE_NAME</span>
+            <span class="n">executed_files_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">defg</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">defg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">defg</span> <span class="ow">in</span> <span class="n">path_lst</span><span class="p">:</span>
+                <span class="n">path_lst</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">defg</span><span class="p">)</span>
+        <span class="n">dag_status</span><span class="o">=</span><span class="s1">&#39;proceed&#39;</span>
+
+        <span class="c1"># STEP 3  if no files left to be proessed, Process will exit right here</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_lst</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;exiting as there are no pending latest file to be processed&quot;</span><span class="p">)</span>
+            <span class="n">dag_status</span><span class="o">=</span><span class="s1">&#39;skip&#39;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">dag_status</span><span class="p">)</span>
+            <span class="c1"># raise AirflowFailException(&#39;Bad run: No files available to ingest&#39;)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+        <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;An expection Occured while doing the fetching the file list processed details&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">error</span>
+
+    <span class="k">return</span> <span class="n">s3_location</span><span class="p">,</span><span class="n">dag_status</span><span class="p">,</span><span class="n">path_lst</span></div>
+
+<div class="viewcode-block" id="fetchBatchIdsToPreprocess"><a class="viewcode-back" href="../../ingestion.html#ingestion.fm_s3_snowflake.fetchBatchIdsToPreprocess">[docs]</a><span class="k">def</span> <span class="nf">fetchBatchIdsToPreprocess</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="n">path_lst</span><span class="p">,</span><span class="n">s3_location</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;printing fetchBatchIdsToPreprocess function started&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">path_lst</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">fl</span> <span class="ow">in</span> <span class="n">path_lst</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;loading into admin log for the below file: &quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span>
+            <span class="c1"># s3_location_new = [name.replace(&quot;&#39;&quot;,&#39;&#39;) for name in s3_location if(fl in name)]</span>
+            <span class="c1"># s3_location_new=[&#39;-&#39;.join(s3_location_new)]</span>
+            <span class="c1"># s3_location_val=s3_location_new[0]</span>
+            <span class="c1"># print(s3_location_val)</span>
+            <span class="n">admin_table_df</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">create_dataframe</span><span class="p">([</span><span class="s1">&#39;FM&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="s2">&quot;SOURCE_NAME&quot;</span><span class="p">)</span>
+            <span class="n">admin_table_df</span><span class="o">=</span><span class="n">admin_table_df</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;FILE_NAME&#39;</span><span class="p">,</span><span class="n">lit</span><span class="p">(</span><span class="n">fl</span><span class="p">))</span> \
+                                        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;S3_Location&#39;</span><span class="p">,</span><span class="n">lit</span><span class="p">(</span><span class="n">s3_location</span><span class="p">))</span> \
+                                        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;LOAD_START_TIME&#39;</span><span class="p">,</span><span class="n">current_timestamp</span><span class="p">())</span> \
+                                        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;LOAD_STATUS&#39;</span><span class="p">,</span><span class="n">lit</span><span class="p">(</span><span class="s1">&#39;Started&#39;</span><span class="p">))</span> \
+                                        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;LOAD_END_TIME&#39;</span><span class="p">,</span><span class="n">lit</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span> \
+                                        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;EXECUTION_DURATION&#39;</span><span class="p">,</span><span class="n">lit</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span> \
+                                        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;FILE_FMT_ERROR_CNT&#39;</span><span class="p">,</span><span class="n">lit</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span> \
+                                        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;BATCHID&#39;</span><span class="p">,</span><span class="n">lit</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span> \
+                                        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;DATA_MIN_TIMESTAMP&#39;</span><span class="p">,</span><span class="n">lit</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span> \
+                                        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;DATA_MAX_TIMESTAMP&#39;</span><span class="p">,</span><span class="n">lit</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span> 
+            <span class="c1"># admin_table_df.show()</span>
+            <span class="n">admin_table_df</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s1">&#39;append&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">saveAsTable</span><span class="p">(</span><span class="s2">&quot;raw.ADMIN_LOG&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;An expection Occured while doing the ADMIN_LOG entry&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">error</span>
+    <span class="k">return</span> <span class="n">s3_location</span><span class="p">,</span><span class="n">path_lst</span>  </div>
+   
+
+<div class="viewcode-block" id="timestamp"><a class="viewcode-back" href="../../ingestion.html#ingestion.fm_s3_snowflake.timestamp">[docs]</a><span class="k">def</span> <span class="nf">timestamp</span><span class="p">(</span><span class="n">path_lst</span><span class="p">,</span><span class="n">session</span><span class="p">,</span><span class="n">batchId</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">path_lst</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">fl</span> <span class="ow">in</span> <span class="n">path_lst</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span>
+            <span class="c1"># unique_key=uuid.uuid4()</span>
+            <span class="n">unique_key</span><span class="o">=</span><span class="n">batchId</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">unique_key</span><span class="p">)</span>
+            <span class="n">tble_name</span><span class="o">=</span><span class="n">fl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">raw_table</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;fm_landing.</span><span class="si">{</span><span class="n">tble_name</span><span class="si">}</span><span class="s2">_raw&quot;</span>
+            <span class="n">interim_table</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;fm_landing.</span><span class="si">{</span><span class="n">tble_name</span><span class="si">}</span><span class="s2">_interim&quot;</span>
+            <span class="c1"># truncate_query=f&quot;truncate table {interim_table}&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">tble_name</span><span class="p">)</span>
+            <span class="n">column_nm</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;defi.def_</span><span class="si">{</span><span class="n">tble_name</span><span class="si">}</span><span class="s2">_col&quot;</span>
+            <span class="n">colmns_name</span><span class="o">=</span><span class="nb">eval</span><span class="p">(</span><span class="n">column_nm</span><span class="p">)</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">colmns_name</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+            <span class="c1"># truncate=session.sql(truncate_query).show()</span>
+            <span class="n">read_query</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;COPY INTO </span><span class="si">{</span><span class="n">raw_table</span><span class="si">}</span><span class="s2"> FROM (select </span><span class="si">{</span><span class="n">columns</span><span class="si">}</span><span class="s2">, &#39;</span><span class="si">{</span><span class="n">unique_key</span><span class="si">}</span><span class="s2">&#39;  FROM @FM_S3_STAGE/</span><span class="si">{</span><span class="n">fl</span><span class="si">}</span><span class="s2">) FILE_FORMAT=(FORMAT_NAME=PARQUET_FILE_FMT) ON_ERROR=&#39;CONTINUE&#39; &quot;</span>
+            <span class="c1"># print(read_query)</span>
+            <span class="n">read_df</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">read_query</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Details for records with format errors entered into table FILE_FMT_ERR&quot;</span><span class="p">)</span>
+            <span class="c1"># insert_query_df = session.table(interim_table)</span>
+            <span class="c1"># insert_query_df=insert_query_df.withColumn(&#39;BATCH_ID&#39;,lit(str(unique_key)))</span>
+            <span class="c1"># insert_query_df.write.mode(&#39;append&#39;).saveAsTable(raw_table)</span>
+            <span class="n">update_batchid_q</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;UPDATE RAW.ADMIN_LOG set batchid = &#39;</span><span class="si">{</span><span class="n">unique_key</span><span class="si">}</span><span class="s1">&#39;, LOAD_END_TIME=current_timestamp,LOAD_STATUS = &#39;Completed&#39;  WHERE LOAD_STATUS = &#39;Started&#39; and source_name=&#39;FM&#39; and file_name=&#39;</span><span class="si">{</span><span class="n">fl</span><span class="si">}</span><span class="s1">&#39; &#39;&#39;&#39;</span>
+            <span class="n">update_batchid_detailss</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">update_batchid_q</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+            <span class="n">load_end_query_2</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;UPDATE RAW.ADMIN_LOG set EXECUTION_DURATION = datediff(minute, LOAD_START_TIME, LOAD_END_TIME) WHERE LOAD_STATUS = &#39;Completed&#39; and source_name=&#39;FM&#39; and file_name=&#39;</span><span class="si">{</span><span class="n">fl</span><span class="si">}</span><span class="s1">&#39; &#39;&#39;&#39;</span>
+            <span class="n">load_end_details</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">load_end_query_2</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="n">delete_query</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;delete from </span><span class="si">{</span><span class="n">raw_table</span><span class="si">}</span><span class="s2"> where batch_id = &#39;</span><span class="si">{</span><span class="n">unique_key</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">delete_query</span><span class="p">)</span>
+            <span class="n">read_df</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">delete_query</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;An expection Occured while doing the FM data ingestion&quot;</span><span class="p">)</span>
+            <span class="n">load_end_query_1</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;UPDATE RAW.ADMIN_LOG set LOAD_STATUS = &#39;Failed&#39; WHERE LOAD_STATUS = &#39;Started&#39; and source_name=&#39;FM&#39; and file_name=&#39;</span><span class="si">{</span><span class="n">fl</span><span class="si">}</span><span class="s1">&#39; &#39;&#39;&#39;</span>
+            <span class="n">load_end_details</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">load_end_query_1</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">error</span></div>
+        
+<div class="viewcode-block" id="execute"><a class="viewcode-back" href="../../ingestion.html#ingestion.fm_s3_snowflake.execute">[docs]</a><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">batchId</span><span class="p">):</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">init_config</span><span class="p">()</span>
+
+    <span class="n">CONNECTION_PARAMETERS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;account&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;account&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;schema&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;database&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;warehouse&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;warehouse&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;role&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;role&#39;</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">configs</span><span class="p">(</span><span class="n">CONNECTION_PARAMETERS</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Current batchId from fetch_fm_landing_subfolders task: </span><span class="si">{</span><span class="n">batchId</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Current table_name from fetch_fm_landing_subfolders task: </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">batchIds</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">new_lis</span><span class="o">=</span><span class="n">list_query</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="n">table_name</span><span class="p">)</span>
+    <span class="n">path_lst</span> <span class="o">=</span> <span class="n">new_lis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">s3_location</span> <span class="o">=</span> <span class="n">new_lis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># lst_1=admin_log_check(session,path_lst,s3_location)</span>
+    <span class="c1"># s3_location=lst_1[0]</span>
+    <span class="c1"># dag_status=lst_1[1]</span>
+    <span class="c1"># path_lst=lst_1[2]</span>
+
+    <span class="n">lst_2</span><span class="o">=</span><span class="n">processed_files</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="n">path_lst</span><span class="p">,</span><span class="n">s3_location</span><span class="p">)</span>
+    <span class="n">s3_location</span><span class="o">=</span><span class="n">lst_2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dag_status</span><span class="o">=</span><span class="n">lst_2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">path_lst</span><span class="o">=</span><span class="n">lst_2</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">dag_status</span><span class="o">==</span><span class="s1">&#39;proceed&#39;</span><span class="p">:</span>
+        <span class="n">file_lis</span><span class="o">=</span><span class="n">fetchBatchIdsToPreprocess</span><span class="p">(</span><span class="n">session</span><span class="p">,</span><span class="n">path_lst</span><span class="p">,</span><span class="n">s3_location</span><span class="p">)</span>
+        <span class="n">s3_location</span><span class="o">=</span><span class="n">file_lis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">path_lst</span><span class="o">=</span><span class="n">file_lis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">result1</span><span class="o">=</span><span class="n">timestamp</span><span class="p">(</span><span class="n">path_lst</span><span class="p">,</span><span class="n">session</span><span class="p">,</span><span class="n">batchId</span><span class="p">)</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dag_status</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">batchIds</span><span class="p">,</span><span class="n">dag_status</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># subfolder_to_ingest = [&#39;BonusAwardPaid&#39;, &#39;CabinetProfileReceived&#39;, &#39;GameAvailability&#39;, &#39;GameComboActivated&#39;, &#39;GameEnded&#39;, &#39;GamePlayProfileReceived&#39;, &#39;GamePlayStatusReceived&#39;, &#39;NoteStacked&#39;, &#39;OptionListReceived&#39;, &#39;PrimaryGameStarted&#39;, &#39;SecondaryGameEnded&#39;, &#39;SecondaryGameStarted&#39;, &#39;VoucherIssued&#39;, &#39;VoucherRedeemed&#39;]</span>
+    <span class="n">subfolder_to_ingest</span> <span class="o">=</span> <span class="s1">&#39;notestacked&#39;</span>
+    <span class="c1"># subfolder_to_ingest = None</span>
+    <span class="c1"># subfolder_to_ingest = &#39;&#39;</span>
+    <span class="n">table_name</span><span class="o">=</span><span class="n">subfolder_to_ingest</span>
+    <span class="n">testBatchId</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
+    <span class="n">execute</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">testBatchId</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Center of Data Excellence.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
