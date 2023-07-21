@@ -51,7 +51,7 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">preprocessing package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-preprocessing.fm_data_segregation">preprocessing.fm_data_segregation module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#preprocessing-fm-sessionization-module">preprocessing.fm_sessionization module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-preprocessing.fm_sessionization">preprocessing.fm_sessionization module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#preprocessing-sessionisation-script-module">preprocessing.sessionisation_script module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-preprocessing">Module contents</a></li>
 </ul>
@@ -77,6 +77,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="airflow-doc/deploy.html">Deploy Airflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="airflow-doc/doc.html">Restart Airflow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Misc.</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="software-doc/cdata.html">cData Sync</a></li>
 </ul>
 
         </div>
@@ -157,8 +161,53 @@
 <dd></dd></dl>
 
 </section>
-<section id="preprocessing-fm-sessionization-module">
-<h2>preprocessing.fm_sessionization module<a class="headerlink" href="#preprocessing-fm-sessionization-module" title="Permalink to this heading"></a></h2>
+<section id="module-preprocessing.fm_sessionization">
+<span id="preprocessing-fm-sessionization-module"></span><h2>preprocessing.fm_sessionization module<a class="headerlink" href="#module-preprocessing.fm_sessionization" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.calcTimeAndCreditThresholds">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">calcTimeAndCreditThresholds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rawDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#calcTimeAndCreditThresholds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.calcTimeAndCreditThresholds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.demarcateSessionStartAndEnds">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">demarcateSessionStartAndEnds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeAndCreditStatusDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#demarcateSessionStartAndEnds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.demarcateSessionStartAndEnds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.execute">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">customerName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.execute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.fetchRawDf">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">fetchRawDf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">customerName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#fetchRawDf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.fetchRawDf" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.forwardFillSessionIds">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">forwardFillSessionIds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uniqueSessionIdDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#forwardFillSessionIds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.forwardFillSessionIds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.generateSessionNumbers">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">generateSessionNumbers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sessionStatesDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#generateSessionNumbers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.generateSessionNumbers" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.generateUniqueSessionIds">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">generateUniqueSessionIds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sessNumDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#generateUniqueSessionIds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.generateUniqueSessionIds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.init_config">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">init_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#init_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.init_config" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.saveSessionizedData">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">saveSessionizedData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sessionizedDf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">customerName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#saveSessionizedData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.saveSessionizedData" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="preprocessing-sessionisation-script-module">
 <h2>preprocessing.sessionisation_script module<a class="headerlink" href="#preprocessing-sessionisation-script-module" title="Permalink to this heading"></a></h2>

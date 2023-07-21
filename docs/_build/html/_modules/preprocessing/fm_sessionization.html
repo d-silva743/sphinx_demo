@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>preprocessing.fm_sessionization &mdash; CoDE Documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            CoDE Documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Github Codebase</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Scripts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/setup.html">Setup your environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/requirements.html">Code Requirements</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Software Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../software-doc/cdata.html">cData Sync</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../software-doc/azure-sso.html">Azure SSO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Airflow</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../airflow-doc/deploy.html">Deploy Airflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../airflow-doc/doc.html">Restart Airflow</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Misc.</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../software-doc/cdata.html">cData Sync</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">CoDE Documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">preprocessing.fm_sessionization</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for preprocessing.fm_sessionization</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">snowflake.snowpark.session</span> <span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span> <span class="nn">snowflake.snowpark.types</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">snowflake.snowpark.functions</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">snowflake.snowpark.functions</span> <span class="kn">import</span> <span class="n">col</span>
+<span class="kn">from</span> <span class="nn">snowflake.snowpark</span> <span class="kn">import</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">from</span> <span class="nn">snowflake.snowpark.window</span> <span class="kn">import</span> <span class="n">Window</span>
+<span class="kn">from</span> <span class="nn">snowflake.snowpark.functions</span> <span class="kn">import</span> <span class="n">from_unixtime</span><span class="p">,</span> <span class="n">date_format</span><span class="p">,</span> <span class="n">unix_timestamp</span><span class="p">,</span> <span class="n">to_timestamp</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">configparser</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<div class="viewcode-block" id="init_config"><a class="viewcode-back" href="../../preprocessing.html#preprocessing.fm_sessionization.init_config">[docs]</a><span class="k">def</span> <span class="nf">init_config</span><span class="p">():</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+
+    <span class="n">parentFolderPath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">config_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parentFolderPath</span><span class="p">,</span> <span class="s1">&#39;common/utils&#39;</span><span class="p">,</span> <span class="s1">&#39;config.ini&#39;</span><span class="p">)</span>
+
+    <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">config_file_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">config</span></div>
+
+<span class="n">timeThreshold</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">60</span>
+<span class="n">creditThreshold</span> <span class="o">=</span> <span class="mi">50000</span>
+
+<div class="viewcode-block" id="fetchRawDf"><a class="viewcode-back" href="../../preprocessing.html#preprocessing.fm_sessionization.fetchRawDf">[docs]</a><span class="k">def</span> <span class="nf">fetchRawDf</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">customerName</span><span class="p">,</span> <span class="n">batchId</span><span class="p">):</span>
+    <span class="n">rawDf</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;raw.fm_raw&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">((</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;customer&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">customerName</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s1">&#39;batch_Id&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">batchId</span><span class="p">))</span>
+
+    <span class="n">rawDf</span> <span class="o">=</span> <span class="n">rawDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;sortpriority&#39;</span><span class="p">,</span> 
+                <span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">rawDf</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">rawDf</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;game_changed&#39;</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">rawDf</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;n&#39;</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">rawDf</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">rawDf</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;pss&#39;</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">rawDf</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">rawDf</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;x&#39;</span><span class="p">),</span> <span class="mi">7</span><span class="p">)</span>    
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">rawDf</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;y&#39;</span><span class="p">),</span> <span class="mi">8</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">rawDf</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;o&#39;</span><span class="p">),</span> <span class="mi">9</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">rawDf</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;pse&#39;</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">rawDf</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span><span class="p">),</span><span class="mi">11</span><span class="p">)</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="c1">#region  Uncomment for unit testing or troubleshooting</span>
+
+    <span class="c1"># rawDf.select([&#39;egmId&#39;, &#39;rectype&#39;, &#39;sortpriority&#39;, &#39;trantimestamp&#39;, &#39;gameplaylogsequence&#39;, &#39;creditmeter&#39;, &#39;tranamt&#39;, &#39;payout&#39;, &#39;themeid&#39;, &#39;deviceid&#39;, &#39;denomid&#39;, &#39;customer&#39;]) \</span>
+    <span class="c1">#     .orderBy(rawDf.egmId, rawDf.trantimestamp, rawDf.gameplaylogsequence, rawDf.sortpriority) \</span>
+    <span class="c1">#     .show(500)</span>
+
+    <span class="c1">#endregion  Uncomment for unit testing or troubleshooting</span>
+
+    <span class="k">return</span> <span class="n">rawDf</span></div>
+
+<div class="viewcode-block" id="calcTimeAndCreditThresholds"><a class="viewcode-back" href="../../preprocessing.html#preprocessing.fm_sessionization.calcTimeAndCreditThresholds">[docs]</a><span class="k">def</span> <span class="nf">calcTimeAndCreditThresholds</span><span class="p">(</span><span class="n">rawDf</span><span class="p">):</span>
+    <span class="c1"># Add next and previous timestamps as individual columns</span>
+    <span class="n">lagDf</span> <span class="o">=</span> <span class="n">rawDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;nextTimestamp&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">lead</span><span class="p">(</span><span class="n">rawDf</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">)</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="n">rawDf</span><span class="o">.</span><span class="n">egmId</span><span class="p">)</span>
+                                                                                <span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">rawDf</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">,</span> <span class="n">rawDf</span><span class="o">.</span><span class="n">gameplaylogsequence</span><span class="p">,</span> <span class="n">rawDf</span><span class="o">.</span><span class="n">sortpriority</span><span class="p">)))</span> \
+            <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;prevTimestamp&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">lag</span><span class="p">(</span><span class="n">rawDf</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">)</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="n">rawDf</span><span class="o">.</span><span class="n">egmId</span><span class="p">)</span>
+                                                                                <span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">rawDf</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">,</span> <span class="n">rawDf</span><span class="o">.</span><span class="n">gameplaylogsequence</span><span class="p">,</span> <span class="n">rawDf</span><span class="o">.</span><span class="n">sortpriority</span><span class="p">)))</span>
+
+    <span class="c1"># Add the time differences between current timestamp and next and previous timestamps in seconds</span>
+    <span class="n">timeDeltaDf</span> <span class="o">=</span> <span class="n">lagDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;nextTimestampDelta&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">datediff</span><span class="p">(</span><span class="s1">&#39;second&#39;</span><span class="p">,</span> <span class="n">lagDf</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">,</span> <span class="n">lagDf</span><span class="o">.</span><span class="n">nexttimestamp</span><span class="p">))</span> \
+                <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;prevTimestampDelta&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">datediff</span><span class="p">(</span><span class="s1">&#39;second&#39;</span><span class="p">,</span> <span class="n">lagDf</span><span class="o">.</span><span class="n">prevtimestamp</span><span class="p">,</span> <span class="n">lagDf</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">))</span>
+
+    <span class="c1"># Check if the time differences exceed the defined time threshold gap and add the result as one more column</span>
+    <span class="n">timeThresholdsDf</span> <span class="o">=</span> <span class="n">timeDeltaDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;isNextTimeThresholdMet&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">timeDeltaDf</span><span class="o">.</span><span class="n">nextTimestampDelta</span> <span class="o">&gt;</span> <span class="n">timeThreshold</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="kc">False</span><span class="p">))</span> \
+                <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;isPrevTimeThresholdMet&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">timeDeltaDf</span><span class="o">.</span><span class="n">prevTimestampDelta</span> <span class="o">&gt;</span> <span class="n">timeThreshold</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="kc">False</span><span class="p">))</span>
+    
+    <span class="c1"># Check the credit thresholds and add the result as 2 more columns so that </span>
+    <span class="c1"># it is in the required format to determine session start and ends</span>
+    <span class="n">timeAndCreditStatusDf</span> <span class="o">=</span> <span class="n">timeThresholdsDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;isCashOut&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">(((</span><span class="n">timeThresholdsDf</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;v&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">timeThresholdsDf</span><span class="o">.</span><span class="n">creditmeter</span> <span class="o">&lt;</span> <span class="n">creditThreshold</span><span class="p">)),</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="kc">False</span><span class="p">))</span> \
+            <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;isCashIn&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">timeThresholdsDf</span><span class="o">.</span><span class="n">rectype</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="kc">False</span><span class="p">))</span>
+    
+    <span class="c1">#region  Uncomment for unit testing or troubleshooting</span>
+
+    <span class="c1"># timeAndCreditStatusDf.select([&#39;egmId&#39;, &#39;rectype&#39;, &#39;sortpriority&#39;, &#39;gameplaylogsequence&#39;, &#39;trantimestamp&#39;, </span>
+    <span class="c1">#             &#39;sessionstate&#39;, &#39;sessionstart&#39;, &#39;nexttimestamp&#39;,&#39;prevTimestamp&#39;, &#39;nextTimestampDelta&#39;, &#39;prevTimestampDelta&#39;, </span>
+    <span class="c1">#             &#39;isNextTimeThresholdMet&#39;,&#39;isPrevTimeThresholdMet&#39;, &#39;isCashout&#39;,&#39;isCashIn&#39;, </span>
+    <span class="c1">#         &#39;creditmeter&#39;, &#39;tranamt&#39;, &#39;payout&#39;, &#39;themeid&#39;, &#39;deviceid&#39;, &#39;denomid&#39;, &#39;customer&#39;]) \</span>
+    <span class="c1"># .orderBy(timeAndCreditStatusDf.egmId, timeAndCreditStatusDf.trantimestamp, timeAndCreditStatusDf.gameplaylogsequence, timeAndCreditStatusDf.sortpriority) \</span>
+    <span class="c1"># .show(2000)</span>
+
+    <span class="c1">#endregion  Uncomment for unit testing or troubleshooting</span>
+    
+    <span class="k">return</span> <span class="n">timeAndCreditStatusDf</span></div>
+
+<div class="viewcode-block" id="demarcateSessionStartAndEnds"><a class="viewcode-back" href="../../preprocessing.html#preprocessing.fm_sessionization.demarcateSessionStartAndEnds">[docs]</a><span class="k">def</span> <span class="nf">demarcateSessionStartAndEnds</span><span class="p">(</span><span class="n">timeAndCreditStatusDf</span><span class="p">):</span>
+    <span class="n">sessionStatesDf</span> <span class="o">=</span> <span class="n">timeAndCreditStatusDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;sessionstate&#39;</span><span class="p">,</span> 
+                                        <span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">timeAndCreditStatusDf</span><span class="o">.</span><span class="n">isCashOut</span> <span class="o">&amp;</span> <span class="n">timeAndCreditStatusDf</span><span class="o">.</span><span class="n">isNextTimeThresholdMet</span><span class="p">),</span> <span class="s1">&#39;session end&#39;</span><span class="p">)</span>
+                                        <span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">timeAndCreditStatusDf</span><span class="o">.</span><span class="n">isCashIn</span> <span class="o">&amp;</span> <span class="n">timeAndCreditStatusDf</span><span class="o">.</span><span class="n">isPrevTimeThresholdMet</span><span class="p">),</span> <span class="s1">&#39;potential session start&#39;</span><span class="p">)</span>
+                                        <span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="s1">&#39;game continued&#39;</span><span class="p">))</span> 
+    
+    <span class="n">sessionStatesDf</span> <span class="o">=</span> <span class="n">sessionStatesDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;prevSessionState&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">lag</span><span class="p">(</span><span class="n">sessionStatesDf</span><span class="o">.</span><span class="n">sessionstate</span><span class="p">)</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="n">sessionStatesDf</span><span class="o">.</span><span class="n">egmId</span><span class="p">)</span>
+                                                                                                              <span class="o">.</span><span class="n">orderBy</span><span class="p">(</span>
+                                                                                                                        <span class="n">sessionStatesDf</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">,</span> 
+                                                                                                                        <span class="n">sessionStatesDf</span><span class="o">.</span><span class="n">gameplaylogsequence</span><span class="p">,</span> 
+                                                                                                                        <span class="n">sessionStatesDf</span><span class="o">.</span><span class="n">sortpriority</span>
+                                                                                                              <span class="p">)))</span>
+    <span class="n">sessionStatesDf</span><span class="o">=</span><span class="n">sessionStatesDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;sessionstart&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">sessionStatesDf</span><span class="o">.</span><span class="n">prevsessionstate</span><span class="o">==</span><span class="s1">&#39;session end&#39;</span><span class="p">),</span><span class="s1">&#39;session start&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+
+    <span class="c1">#region  Uncomment for unit testing or troubleshooting</span>
+
+    <span class="c1"># sessionStatesDf.select([&#39;egmId&#39;, &#39;rectype&#39;, &#39;sortpriority&#39;, &#39;gameplaylogsequence&#39;, &#39;trantimestamp&#39;, </span>
+    <span class="c1">#              &#39;sessionstart&#39;, &#39;sessionstate&#39;, &#39;prevsessionstate&#39;, &#39;nexttimestamp&#39;,&#39;prevTimestamp&#39;, &#39;nextTimestampDelta&#39;, &#39;prevTimestampDelta&#39;, </span>
+    <span class="c1">#             &#39;isNextTimeThresholdMet&#39;,&#39;isPrevTimeThresholdMet&#39;, &#39;isCashout&#39;,&#39;isCashIn&#39;, </span>
+    <span class="c1">#         &#39;creditmeter&#39;, &#39;tranamt&#39;, &#39;payout&#39;, &#39;themeid&#39;, &#39;deviceid&#39;, &#39;denomid&#39;, &#39;customer&#39;]) \</span>
+    <span class="c1"># .orderBy(sessionStatesDf.egmId, sessionStatesDf.trantimestamp, sessionStatesDf.gameplaylogsequence, sessionStatesDf.sortpriority) \</span>
+    <span class="c1"># .show(2000)</span>
+
+    <span class="c1">#endregion  Uncomment for unit testing or troubleshooting</span>
+
+    <span class="k">return</span> <span class="n">sessionStatesDf</span></div>
+
+<div class="viewcode-block" id="generateSessionNumbers"><a class="viewcode-back" href="../../preprocessing.html#preprocessing.fm_sessionization.generateSessionNumbers">[docs]</a><span class="k">def</span> <span class="nf">generateSessionNumbers</span><span class="p">(</span><span class="n">sessionStatesDf</span><span class="p">):</span>
+    <span class="n">sessNumDf</span> <span class="o">=</span> <span class="n">sessionStatesDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;sessionNumber&#39;</span><span class="p">,</span> 
+                                                <span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">((</span><span class="n">sessionStatesDf</span><span class="o">.</span><span class="n">sessionstart</span><span class="o">.</span><span class="n">isNotNull</span><span class="p">()),</span> 
+                                                            <span class="n">F</span><span class="o">.</span><span class="n">row_number</span><span class="p">()</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="n">sessionStatesDf</span><span class="o">.</span><span class="n">egmId</span><span class="p">,</span> <span class="n">sessionStatesDf</span><span class="o">.</span><span class="n">sessionstart</span><span class="p">)</span>
+                                                                                    <span class="o">.</span><span class="n">orderBy</span><span class="p">(</span>
+                                                                                                <span class="n">sessionStatesDf</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">,</span> 
+                                                                                                <span class="n">sessionStatesDf</span><span class="o">.</span><span class="n">gameplaylogsequence</span><span class="p">,</span> 
+                                                                                                <span class="n">sessionStatesDf</span><span class="o">.</span><span class="n">sortpriority</span>
+                                                                                            <span class="p">)</span>
+                                                                                <span class="p">)</span>
+                                                        <span class="p">)</span>
+                                            <span class="p">)</span>
+
+    <span class="c1">#region  Uncomment for unit testing or troubleshooting</span>
+
+    <span class="c1"># sessNumDf.select([&#39;egmId&#39;, &#39;rectype&#39;, &#39;sortpriority&#39;, &#39;gameplaylogsequence&#39;, &#39;trantimestamp&#39;, </span>
+    <span class="c1">#                 &#39;sessionNumber&#39;,&#39;sessionstart&#39;, &#39;sessionstate&#39;, </span>
+    <span class="c1">#             &#39;creditmeter&#39;, &#39;tranamt&#39;, &#39;payout&#39;, &#39;themeid&#39;, &#39;deviceid&#39;, &#39;denomid&#39;, &#39;customer&#39;]) \</span>
+    <span class="c1">#     .orderBy(sessNumDf.egmId, sessNumDf.trantimestamp, sessNumDf.gameplaylogsequence, sessNumDf.sortpriority).show(500)</span>
+
+    <span class="c1">#endregion  Uncomment for unit testing or troubleshooting</span>
+    
+    <span class="k">return</span> <span class="n">sessNumDf</span></div>
+
+<div class="viewcode-block" id="generateUniqueSessionIds"><a class="viewcode-back" href="../../preprocessing.html#preprocessing.fm_sessionization.generateUniqueSessionIds">[docs]</a><span class="k">def</span> <span class="nf">generateUniqueSessionIds</span><span class="p">(</span><span class="n">sessNumDf</span><span class="p">):</span>
+    <span class="n">segDf</span> <span class="o">=</span> <span class="n">sessNumDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;timestampstr&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">(</span><span class="n">sessNumDf</span><span class="o">.</span><span class="n">sessionNumber</span><span class="o">.</span><span class="n">isNotNull</span><span class="p">(),</span> 
+                                                        <span class="n">F</span><span class="o">.</span><span class="n">to_char</span><span class="p">(</span><span class="n">sessNumDf</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">,</span> <span class="s1">&#39;yyyyMMddHHmmss&#39;</span><span class="p">)))</span>
+    
+    <span class="n">uniqueSessionIdDf</span> <span class="o">=</span> <span class="n">segDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;uniqueSessionId&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">concat_ws</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">),</span> <span class="n">segDf</span><span class="o">.</span><span class="n">egmId</span><span class="p">,</span> <span class="n">segDf</span><span class="o">.</span><span class="n">timestampstr</span><span class="p">,</span> <span class="n">segDf</span><span class="o">.</span><span class="n">sessionNumber</span><span class="p">))</span>
+
+    <span class="c1">#region  Uncomment for unit testing or troubleshooting</span>
+
+    <span class="c1"># sessionIdDf.select([&#39;egmId&#39;, &#39;rectype&#39;, &#39;sortpriority&#39;, &#39;gameplaylogsequence&#39;, &#39;trantimestamp&#39;, </span>
+    <span class="c1">#                 &#39;uniqueSessionId&#39;, &#39;timestampstr&#39;, &#39;sessionNumber&#39;,&#39;sessionstart&#39;, &#39;sessionstate&#39;, </span>
+    <span class="c1">#             &#39;creditmeter&#39;, &#39;tranamt&#39;, &#39;payout&#39;, &#39;themeid&#39;, &#39;deviceid&#39;, &#39;denomid&#39;, &#39;customer&#39;]) \</span>
+    <span class="c1">#     .orderBy(sessionIdDf.egmId, sessionIdDf.trantimestamp, sessionIdDf.gameplaylogsequence, sessionIdDf.sortpriority).show(500)</span>
+
+    <span class="c1">#endregion  Uncomment for unit testing or troubleshooting</span>
+
+    <span class="k">return</span> <span class="n">uniqueSessionIdDf</span></div>
+
+<div class="viewcode-block" id="forwardFillSessionIds"><a class="viewcode-back" href="../../preprocessing.html#preprocessing.fm_sessionization.forwardFillSessionIds">[docs]</a><span class="k">def</span> <span class="nf">forwardFillSessionIds</span><span class="p">(</span><span class="n">uniqueSessionIdDf</span><span class="p">):</span>
+    <span class="c1"># Unlike pandas, forward fill method is not available OOTB in snowpark</span>
+    <span class="n">lagsDf</span> <span class="o">=</span> <span class="n">uniqueSessionIdDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;prevSessionId&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">lag</span><span class="p">(</span><span class="n">uniqueSessionIdDf</span><span class="o">.</span><span class="n">uniqueSessionId</span><span class="p">,</span> <span class="n">ignore_nulls</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                                                        <span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">Window</span><span class="o">.</span><span class="n">partitionBy</span><span class="p">(</span><span class="n">uniqueSessionIdDf</span><span class="o">.</span><span class="n">egmId</span><span class="p">)</span>
+                                                                    <span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="n">uniqueSessionIdDf</span><span class="o">.</span><span class="n">trantimestamp</span><span class="p">,</span> 
+                                                                             <span class="n">uniqueSessionIdDf</span><span class="o">.</span><span class="n">gameplaylogsequence</span><span class="p">,</span> 
+                                                                             <span class="n">uniqueSessionIdDf</span><span class="o">.</span><span class="n">sortpriority</span><span class="p">)))</span>
+
+    <span class="n">filledDf</span> <span class="o">=</span> <span class="n">lagsDf</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s1">&#39;filledSessionId&#39;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">coalesce</span><span class="p">(</span><span class="n">lagsDf</span><span class="o">.</span><span class="n">uniqueSessionId</span><span class="p">,</span> <span class="n">lagsDf</span><span class="o">.</span><span class="n">prevSessionId</span><span class="p">))</span>
+
+    <span class="c1">#region  Uncomment for unit testing or troubleshooting</span>
+
+    <span class="c1"># filledDf.select([&#39;egmId&#39;, &#39;rectype&#39;, &#39;sortpriority&#39;, &#39;gameplaylogsequence&#39;, &#39;trantimestamp&#39;, </span>
+    <span class="c1">#                 &#39;sessionstate&#39;,&#39;sessionstart&#39;, &#39;filledSessionId&#39;,&#39;sessionId&#39;, &#39;prevSessionId&#39;, &#39;sessionNumber&#39;,</span>
+    <span class="c1">#             &#39;creditmeter&#39;, &#39;tranamt&#39;, &#39;payout&#39;, &#39;themeid&#39;, &#39;deviceid&#39;, &#39;denomid&#39;, &#39;customer&#39;]) \</span>
+    <span class="c1">#     .orderBy(filledDf.egmId, filledDf.trantimestamp, filledDf.gameplaylogsequence, filledDf.sortpriority).show(500)</span>
+
+    <span class="c1">#endregion  Uncomment for unit testing or troubleshooting</span>
+    
+    <span class="n">sessionizedDf</span> <span class="o">=</span> <span class="n">filledDf</span>
+
+    <span class="k">return</span> <span class="n">sessionizedDf</span></div>
+
+<div class="viewcode-block" id="saveSessionizedData"><a class="viewcode-back" href="../../preprocessing.html#preprocessing.fm_sessionization.saveSessionizedData">[docs]</a><span class="k">def</span> <span class="nf">saveSessionizedData</span><span class="p">(</span><span class="n">sessionizedDf</span><span class="p">,</span> <span class="n">customerName</span><span class="p">,</span> <span class="n">batchId</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initiated: Save of sessions belonging to customer </span><span class="si">{</span><span class="n">customerName</span><span class="si">}</span><span class="s2"> and batchId </span><span class="si">{</span><span class="n">batchId</span><span class="si">}</span><span class="s2"> into FM_Sessionized table&quot;</span><span class="p">)</span>
+
+    <span class="c1"># sessionizedDf.show(500)</span>
+
+    <span class="n">renamedDf</span> <span class="o">=</span> <span class="n">sessionizedDf</span><span class="o">.</span><span class="n">withColumnRenamed</span><span class="p">(</span><span class="s1">&#39;filledSessionId&#39;</span><span class="p">,</span> <span class="s1">&#39;sessionId&#39;</span><span class="p">)</span>
+
+    <span class="n">sessionsDf</span> <span class="o">=</span> <span class="n">renamedDf</span><span class="o">.</span><span class="n">select</span><span class="p">([</span>
+                                    <span class="s1">&#39;egmId&#39;</span><span class="p">,</span> <span class="s1">&#39;rectype&#39;</span><span class="p">,</span> <span class="s1">&#39;sessionId&#39;</span><span class="p">,</span> <span class="s1">&#39;trantimestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;gameplaylogsequence&#39;</span><span class="p">,</span> 
+                                    <span class="s1">&#39;creditmeter&#39;</span><span class="p">,</span> <span class="s1">&#39;tranamt&#39;</span><span class="p">,</span> <span class="s1">&#39;payout&#39;</span><span class="p">,</span> <span class="s1">&#39;themeid&#39;</span><span class="p">,</span> <span class="s1">&#39;themeName&#39;</span><span class="p">,</span> <span class="s1">&#39;deviceid&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;denomid&#39;</span><span class="p">,</span> <span class="s1">&#39;paytable&#39;</span><span class="p">,</span> <span class="s1">&#39;playerId&#39;</span><span class="p">,</span> <span class="s1">&#39;areaid&#39;</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">,</span><span class="s1">&#39;currencyid&#39;</span><span class="p">,</span> <span class="s1">&#39;customer&#39;</span><span class="p">,</span> <span class="s1">&#39;batch_id&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;sortpriority&#39;</span><span class="p">,</span> <span class="s1">&#39;iscashout&#39;</span><span class="p">,</span> <span class="s1">&#39;iscashin&#39;</span><span class="p">,</span> <span class="s1">&#39;sessionstart&#39;</span><span class="p">,</span> <span class="s1">&#39;sessionstate&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;sessionNumber&#39;</span><span class="p">,</span> <span class="s1">&#39;nexttimestampdelta&#39;</span><span class="p">,</span> <span class="s1">&#39;prevtimestampdelta&#39;</span><span class="p">,</span> <span class="s1">&#39;isnexttimethresholdmet&#39;</span><span class="p">,</span> 
+                                    <span class="s1">&#39;isprevtimethresholdmet&#39;</span><span class="p">,</span> <span class="s1">&#39;uniqueSessionId&#39;</span>
+                                <span class="p">])</span>
+
+    <span class="c1"># sessionsDf.show(500)</span>
+
+    <span class="n">sessionsDf</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s1">&#39;append&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">saveAsTable</span><span class="p">(</span><span class="s1">&#39;RAW.FM_Sessionized&#39;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Completed: Save of sessions belonging to customer </span><span class="si">{</span><span class="n">customerName</span><span class="si">}</span><span class="s2"> and batchId </span><span class="si">{</span><span class="n">batchId</span><span class="si">}</span><span class="s2"> into FM_Sessionized table&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="execute"><a class="viewcode-back" href="../../preprocessing.html#preprocessing.fm_sessionization.execute">[docs]</a><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="n">customerName</span><span class="p">,</span> <span class="n">batchId</span><span class="p">):</span>
+    <span class="k">if</span><span class="p">((</span><span class="n">customerName</span> <span class="o">==</span> <span class="kc">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">customerName</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">batchId</span> <span class="o">==</span> <span class="kc">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">batchId</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Invalid customer name or batchId&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+    
+    <span class="n">exec_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">init_config</span><span class="p">()</span>
+
+    <span class="c1">#region initialize session</span>
+
+    <span class="n">CONNECTION_PARAMETERS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;account&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;account&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;schema&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;database&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;database&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;warehouse&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;warehouse&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;role&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;snowflake_connection&#39;</span><span class="p">,</span> <span class="s1">&#39;role&#39;</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">configs</span><span class="p">(</span><span class="n">CONNECTION_PARAMETERS</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+
+    <span class="c1">#endregion initialize session</span>
+
+    <span class="n">rawDf</span> <span class="o">=</span> <span class="n">fetchRawDf</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">customerName</span><span class="p">,</span> <span class="n">batchId</span><span class="p">)</span>
+
+    <span class="n">timeAndCreditStatusDf</span> <span class="o">=</span> <span class="n">calcTimeAndCreditThresholds</span><span class="p">(</span><span class="n">rawDf</span><span class="p">)</span>
+
+    <span class="n">sessionStatesDf</span> <span class="o">=</span> <span class="n">demarcateSessionStartAndEnds</span><span class="p">(</span><span class="n">timeAndCreditStatusDf</span><span class="p">)</span>
+
+    <span class="n">sessNumDf</span> <span class="o">=</span> <span class="n">generateSessionNumbers</span><span class="p">(</span><span class="n">sessionStatesDf</span><span class="p">)</span>
+
+    <span class="n">sessionIdDf</span> <span class="o">=</span> <span class="n">generateUniqueSessionIds</span><span class="p">(</span><span class="n">sessNumDf</span><span class="p">)</span>
+
+    <span class="n">sessionizedDf</span> <span class="o">=</span> <span class="n">forwardFillSessionIds</span><span class="p">(</span><span class="n">sessionIdDf</span><span class="p">)</span>
+
+    <span class="n">saveSessionizedData</span><span class="p">(</span><span class="n">sessionizedDf</span><span class="p">,</span> <span class="n">customerName</span><span class="p">,</span> <span class="n">batchId</span><span class="p">)</span>
+
+    <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">exec_end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">exec_total_time</span> <span class="o">=</span> <span class="n">exec_end_time</span> <span class="o">-</span> <span class="n">exec_start_time</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total time taken: &quot;</span><span class="p">,</span> <span class="n">exec_total_time</span><span class="p">)</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Unit test</span>
+    <span class="n">testCustomerName</span> <span class="o">=</span> <span class="s1">&#39;uil&#39;</span>
+    <span class="n">testBatchId</span> <span class="o">=</span> <span class="s1">&#39;f72fbf50-996b-45a4-b029-a477bf824c04&#39;</span>
+    <span class="n">execute</span><span class="p">(</span><span class="n">testCustomerName</span><span class="p">,</span> <span class="n">testBatchId</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Center of Data Excellence.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

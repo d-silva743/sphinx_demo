@@ -1,5 +1,5 @@
 """
-This is a workflow test
+This is a workflow test.
 """
 
 from snowflake.snowpark.session import Session

@@ -8,7 +8,7 @@ Welcome to CoDE Documentation!
 .. image:: /images/Data_Center_Logo.png
 
 
-Welcome to CoDE Documentation! This is your comprehensive resource for all the setup tutorials, requirements, guides, and additional references you need to effectively get started.
+Welcome to CoDE Documentation. This is your comprehensive resource for all the setup tutorials, requirements, guides, and additional references you need to effectively get started.
 
 Navigate through our documentation to discover in-depth knowledge about our software, tips for best practices, and the solutions to potential issues you might encounter. We've designed it
 to be your reliable assistant, empowering you to maximize the value you get from our product.
