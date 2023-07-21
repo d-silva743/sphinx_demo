@@ -10,3 +10,5 @@ snowflake-snowpark-python[pandas]==1.0.0
 pandas
 Sphinx
 sphinx-rtd-theme
+pre-commit
+sphinxcontrib-plantuml

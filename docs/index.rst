@@ -43,6 +43,7 @@ to be your reliable assistant, empowering you to maximize the value you get from
 
    airflow-doc/deploy
    airflow-doc/doc
+   airflow-doc/diagram
    
 .. toctree::
    :maxdepth: 2
