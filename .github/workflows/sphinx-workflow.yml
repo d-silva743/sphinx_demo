@@ -65,7 +65,7 @@ jobs:
           git commit --allow-empty -m "Initial commit"
           git push origin gh-pages
 
-      - name: Deploy
+      - name: Deploy Pages
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         uses: peaceiris/actions-gh-pages@v3
         with:
