@@ -2,7 +2,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to CoDE Documentation
+Welcome to CoDE Documentation!
 ==============================
 
 .. image:: /images/Data_Center_Logo.png
@@ -16,12 +16,9 @@ to be your reliable assistant, empowering you to maximize the value you get from
 .. toctree::
    :maxdepth: 2
    :hidden:
-   :caption: FM Scripts
+   :caption: Codebase
 
-   docs/cdm_conversion
-   docs/ingestion
-   docs/preprocessing
-
+   modules
 
 .. toctree::
    :maxdepth: 2
@@ -29,7 +26,7 @@ to be your reliable assistant, empowering you to maximize the value you get from
    :caption: Installation
 
    how-to/setup
-   requirements
+   how-to/requirements
 
 .. toctree::
    :maxdepth: 2
@@ -44,7 +41,7 @@ to be your reliable assistant, empowering you to maximize the value you get from
    :hidden:
    :caption: Airflow
 
-   docs/deploy
-   docs/doc
+   airflow-doc/deploy
+   airflow-doc/doc
    
 

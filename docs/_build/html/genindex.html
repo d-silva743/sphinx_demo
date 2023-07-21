@@ -39,15 +39,24 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Codebase</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Scripts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="how-to/setup.html">Setup your environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="requirements.html">Code Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/requirements.html">Code Requirements</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Software Documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="software-doc/cdata.html">cData Sync</a></li>
 <li class="toctree-l1"><a class="reference internal" href="software-doc/azure-sso.html">Azure SSO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Airflow</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="airflow-doc/deploy.html">Deploy Airflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="airflow-doc/doc.html">Restart Airflow</a></li>
 </ul>
 
         </div>
@@ -78,8 +87,10 @@
 
 <div class="genindex-jumpbox">
  <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
@@ -92,13 +103,15 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dags/preprocessing.html#preprocessing.fm_data_segregation.cashin_position_invalid_sessions">cashin_position_invalid_sessions() (in module preprocessing.fm_data_segregation)</a>, <a href="preprocessing.html#preprocessing.fm_data_segregation.cashin_position_invalid_sessions">[1]</a>
+      <li><a href="preprocessing.html#preprocessing.fm_sessionization.calcTimeAndCreditThresholds">calcTimeAndCreditThresholds() (in module preprocessing.fm_sessionization)</a>
+</li>
+      <li><a href="preprocessing.html#preprocessing.fm_data_segregation.cashin_position_invalid_sessions">cashin_position_invalid_sessions() (in module preprocessing.fm_data_segregation)</a>
 </li>
       <li>
     cdm_conversion
 
       <ul>
-        <li><a href="dags/cdm_conversion.html#module-cdm_conversion">module</a>
+        <li><a href="cdm_conversion.html#module-cdm_conversion">module</a>
 </li>
       </ul></li>
   </ul></td>
@@ -107,12 +120,20 @@
     cdm_conversion.fm_cdm_master_transformation
 
       <ul>
-        <li><a href="dags/cdm_conversion.html#module-cdm_conversion.fm_cdm_master_transformation">module</a>
+        <li><a href="cdm_conversion.html#module-cdm_conversion.fm_cdm_master_transformation">module</a>
 </li>
       </ul></li>
-      <li><a href="dags/preprocessing.html#preprocessing.fm_data_segregation.check_valid_wager_pair_for_intensity">check_valid_wager_pair_for_intensity() (in module preprocessing.fm_data_segregation)</a>, <a href="preprocessing.html#preprocessing.fm_data_segregation.check_valid_wager_pair_for_intensity">[1]</a>
+      <li><a href="preprocessing.html#preprocessing.fm_data_segregation.check_valid_wager_pair_for_intensity">check_valid_wager_pair_for_intensity() (in module preprocessing.fm_data_segregation)</a>
 </li>
-      <li><a href="dags/preprocessing.html#preprocessing.fm_data_segregation.curated_data_load">curated_data_load() (in module preprocessing.fm_data_segregation)</a>, <a href="preprocessing.html#preprocessing.fm_data_segregation.curated_data_load">[1]</a>
+      <li><a href="preprocessing.html#preprocessing.fm_data_segregation.curated_data_load">curated_data_load() (in module preprocessing.fm_data_segregation)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="preprocessing.html#preprocessing.fm_sessionization.demarcateSessionStartAndEnds">demarcateSessionStartAndEnds() (in module preprocessing.fm_sessionization)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -120,14 +141,16 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dags/ingestion.html#ingestion.fm_raw_model_tfm.execute">execute() (in module ingestion.fm_raw_model_tfm)</a>, <a href="ingestion.html#ingestion.fm_raw_model_tfm.execute">[1]</a>
+      <li><a href="ingestion.html#ingestion.fm_raw_model_tfm.execute">execute() (in module ingestion.fm_raw_model_tfm)</a>
 
       <ul>
-        <li><a href="dags/ingestion.html#ingestion.fm_s3_snowflake.execute">(in module ingestion.fm_s3_snowflake)</a>, <a href="ingestion.html#ingestion.fm_s3_snowflake.execute">[1]</a>
+        <li><a href="ingestion.html#ingestion.fm_s3_snowflake.execute">(in module ingestion.fm_s3_snowflake)</a>
 </li>
-        <li><a href="dags/ingestion.html#ingestion.fm_s3_snowflake_direct_raw.execute">(in module ingestion.fm_s3_snowflake_direct_raw)</a>, <a href="ingestion.html#ingestion.fm_s3_snowflake_direct_raw.execute">[1]</a>
+        <li><a href="ingestion.html#ingestion.fm_s3_snowflake_direct_raw.execute">(in module ingestion.fm_s3_snowflake_direct_raw)</a>
 </li>
-        <li><a href="dags/preprocessing.html#preprocessing.fm_data_segregation.execute">(in module preprocessing.fm_data_segregation)</a>, <a href="preprocessing.html#preprocessing.fm_data_segregation.execute">[1]</a>
+        <li><a href="preprocessing.html#preprocessing.fm_data_segregation.execute">(in module preprocessing.fm_data_segregation)</a>
+</li>
+        <li><a href="preprocessing.html#preprocessing.fm_sessionization.execute">(in module preprocessing.fm_sessionization)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -136,27 +159,43 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dags/preprocessing.html#preprocessing.fm_data_segregation.fetch_invalid_sessions">fetch_invalid_sessions() (in module preprocessing.fm_data_segregation)</a>, <a href="preprocessing.html#preprocessing.fm_data_segregation.fetch_invalid_sessions">[1]</a>
+      <li><a href="preprocessing.html#preprocessing.fm_data_segregation.fetch_invalid_sessions">fetch_invalid_sessions() (in module preprocessing.fm_data_segregation)</a>
 </li>
-      <li><a href="dags/ingestion.html#ingestion.fm_s3_snowflake.fetchBatchIdsToPreprocess">fetchBatchIdsToPreprocess() (in module ingestion.fm_s3_snowflake)</a>, <a href="ingestion.html#ingestion.fm_s3_snowflake.fetchBatchIdsToPreprocess">[1]</a>
+      <li><a href="ingestion.html#ingestion.fm_s3_snowflake.fetchBatchIdsToPreprocess">fetchBatchIdsToPreprocess() (in module ingestion.fm_s3_snowflake)</a>
 
       <ul>
-        <li><a href="dags/ingestion.html#ingestion.fm_s3_snowflake_direct_raw.fetchBatchIdsToPreprocess">(in module ingestion.fm_s3_snowflake_direct_raw)</a>, <a href="ingestion.html#ingestion.fm_s3_snowflake_direct_raw.fetchBatchIdsToPreprocess">[1]</a>
+        <li><a href="ingestion.html#ingestion.fm_s3_snowflake_direct_raw.fetchBatchIdsToPreprocess">(in module ingestion.fm_s3_snowflake_direct_raw)</a>
 </li>
       </ul></li>
-      <li><a href="dags/ingestion.html#ingestion.fm_raw_model_tfm.fetchBonusPayouts">fetchBonusPayouts() (in module ingestion.fm_raw_model_tfm)</a>, <a href="ingestion.html#ingestion.fm_raw_model_tfm.fetchBonusPayouts">[1]</a>
+      <li><a href="ingestion.html#ingestion.fm_raw_model_tfm.fetchBonusPayouts">fetchBonusPayouts() (in module ingestion.fm_raw_model_tfm)</a>
+</li>
+      <li><a href="ingestion.html#ingestion.fm_raw_model_tfm.fetchCashEvents">fetchCashEvents() (in module ingestion.fm_raw_model_tfm)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dags/ingestion.html#ingestion.fm_raw_model_tfm.fetchCashEvents">fetchCashEvents() (in module ingestion.fm_raw_model_tfm)</a>, <a href="ingestion.html#ingestion.fm_raw_model_tfm.fetchCashEvents">[1]</a>
+      <li><a href="preprocessing.html#preprocessing.fm_data_segregation.fetchCuratedSessionsByBatchId">fetchCuratedSessionsByBatchId() (in module preprocessing.fm_data_segregation)</a>
 </li>
-      <li><a href="dags/preprocessing.html#preprocessing.fm_data_segregation.fetchCuratedSessionsByBatchId">fetchCuratedSessionsByBatchId() (in module preprocessing.fm_data_segregation)</a>, <a href="preprocessing.html#preprocessing.fm_data_segregation.fetchCuratedSessionsByBatchId">[1]</a>
+      <li><a href="ingestion.html#ingestion.fm_raw_model_tfm.fetchMiscEvents">fetchMiscEvents() (in module ingestion.fm_raw_model_tfm)</a>
 </li>
-      <li><a href="dags/ingestion.html#ingestion.fm_raw_model_tfm.fetchMiscEvents">fetchMiscEvents() (in module ingestion.fm_raw_model_tfm)</a>, <a href="ingestion.html#ingestion.fm_raw_model_tfm.fetchMiscEvents">[1]</a>
+      <li><a href="preprocessing.html#preprocessing.fm_sessionization.fetchRawDf">fetchRawDf() (in module preprocessing.fm_sessionization)</a>
 </li>
-      <li><a href="dags/ingestion.html#ingestion.fm_raw_model_tfm.fetchSecondaryGames">fetchSecondaryGames() (in module ingestion.fm_raw_model_tfm)</a>, <a href="ingestion.html#ingestion.fm_raw_model_tfm.fetchSecondaryGames">[1]</a>
+      <li><a href="ingestion.html#ingestion.fm_raw_model_tfm.fetchSecondaryGames">fetchSecondaryGames() (in module ingestion.fm_raw_model_tfm)</a>
 </li>
-      <li><a href="dags/ingestion.html#ingestion.fm_raw_model_tfm.fetchWagerPayouts">fetchWagerPayouts() (in module ingestion.fm_raw_model_tfm)</a>, <a href="ingestion.html#ingestion.fm_raw_model_tfm.fetchWagerPayouts">[1]</a>
+      <li><a href="ingestion.html#ingestion.fm_raw_model_tfm.fetchWagerPayouts">fetchWagerPayouts() (in module ingestion.fm_raw_model_tfm)</a>
+</li>
+      <li><a href="preprocessing.html#preprocessing.fm_sessionization.forwardFillSessionIds">forwardFillSessionIds() (in module preprocessing.fm_sessionization)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="preprocessing.html#preprocessing.fm_sessionization.generateSessionNumbers">generateSessionNumbers() (in module preprocessing.fm_sessionization)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="preprocessing.html#preprocessing.fm_sessionization.generateUniqueSessionIds">generateUniqueSessionIds() (in module preprocessing.fm_sessionization)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -168,42 +207,44 @@
     ingestion
 
       <ul>
-        <li><a href="dags/ingestion.html#module-ingestion">module</a>, <a href="ingestion.html#module-ingestion">[1]</a>
+        <li><a href="ingestion.html#module-ingestion">module</a>
 </li>
       </ul></li>
       <li>
     ingestion.fm_raw_model_tfm
 
       <ul>
-        <li><a href="dags/ingestion.html#module-ingestion.fm_raw_model_tfm">module</a>, <a href="ingestion.html#module-ingestion.fm_raw_model_tfm">[1]</a>
+        <li><a href="ingestion.html#module-ingestion.fm_raw_model_tfm">module</a>
 </li>
       </ul></li>
       <li>
     ingestion.fm_s3_snowflake
 
       <ul>
-        <li><a href="dags/ingestion.html#module-ingestion.fm_s3_snowflake">module</a>, <a href="ingestion.html#module-ingestion.fm_s3_snowflake">[1]</a>
+        <li><a href="ingestion.html#module-ingestion.fm_s3_snowflake">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     ingestion.fm_s3_snowflake_direct_raw
 
       <ul>
-        <li><a href="dags/ingestion.html#module-ingestion.fm_s3_snowflake_direct_raw">module</a>, <a href="ingestion.html#module-ingestion.fm_s3_snowflake_direct_raw">[1]</a>
+        <li><a href="ingestion.html#module-ingestion.fm_s3_snowflake_direct_raw">module</a>
 </li>
       </ul></li>
-      <li><a href="dags/cdm_conversion.html#cdm_conversion.fm_cdm_master_transformation.init_config">init_config() (in module cdm_conversion.fm_cdm_master_transformation)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="cdm_conversion.html#cdm_conversion.fm_cdm_master_transformation.init_config">init_config() (in module cdm_conversion.fm_cdm_master_transformation)</a>
 
       <ul>
-        <li><a href="dags/ingestion.html#ingestion.fm_raw_model_tfm.init_config">(in module ingestion.fm_raw_model_tfm)</a>, <a href="ingestion.html#ingestion.fm_raw_model_tfm.init_config">[1]</a>
+        <li><a href="ingestion.html#ingestion.fm_raw_model_tfm.init_config">(in module ingestion.fm_raw_model_tfm)</a>
 </li>
-        <li><a href="dags/ingestion.html#ingestion.fm_s3_snowflake.init_config">(in module ingestion.fm_s3_snowflake)</a>, <a href="ingestion.html#ingestion.fm_s3_snowflake.init_config">[1]</a>
+        <li><a href="ingestion.html#ingestion.fm_s3_snowflake.init_config">(in module ingestion.fm_s3_snowflake)</a>
 </li>
-        <li><a href="dags/ingestion.html#ingestion.fm_s3_snowflake_direct_raw.init_config">(in module ingestion.fm_s3_snowflake_direct_raw)</a>, <a href="ingestion.html#ingestion.fm_s3_snowflake_direct_raw.init_config">[1]</a>
+        <li><a href="ingestion.html#ingestion.fm_s3_snowflake_direct_raw.init_config">(in module ingestion.fm_s3_snowflake_direct_raw)</a>
 </li>
-        <li><a href="dags/preprocessing.html#preprocessing.fm_data_segregation.init_config">(in module preprocessing.fm_data_segregation)</a>, <a href="preprocessing.html#preprocessing.fm_data_segregation.init_config">[1]</a>
+        <li><a href="preprocessing.html#preprocessing.fm_data_segregation.init_config">(in module preprocessing.fm_data_segregation)</a>
+</li>
+        <li><a href="preprocessing.html#preprocessing.fm_sessionization.init_config">(in module preprocessing.fm_sessionization)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -212,10 +253,10 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dags/ingestion.html#ingestion.fm_s3_snowflake.list_query">list_query() (in module ingestion.fm_s3_snowflake)</a>, <a href="ingestion.html#ingestion.fm_s3_snowflake.list_query">[1]</a>
+      <li><a href="ingestion.html#ingestion.fm_s3_snowflake.list_query">list_query() (in module ingestion.fm_s3_snowflake)</a>
 
       <ul>
-        <li><a href="dags/ingestion.html#ingestion.fm_s3_snowflake_direct_raw.list_query">(in module ingestion.fm_s3_snowflake_direct_raw)</a>, <a href="ingestion.html#ingestion.fm_s3_snowflake_direct_raw.list_query">[1]</a>
+        <li><a href="ingestion.html#ingestion.fm_s3_snowflake_direct_raw.list_query">(in module ingestion.fm_s3_snowflake_direct_raw)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -228,21 +269,23 @@
     module
 
       <ul>
-        <li><a href="dags/cdm_conversion.html#module-cdm_conversion">cdm_conversion</a>
+        <li><a href="cdm_conversion.html#module-cdm_conversion">cdm_conversion</a>
 </li>
-        <li><a href="dags/cdm_conversion.html#module-cdm_conversion.fm_cdm_master_transformation">cdm_conversion.fm_cdm_master_transformation</a>
+        <li><a href="cdm_conversion.html#module-cdm_conversion.fm_cdm_master_transformation">cdm_conversion.fm_cdm_master_transformation</a>
 </li>
-        <li><a href="dags/ingestion.html#module-ingestion">ingestion</a>, <a href="ingestion.html#module-ingestion">[1]</a>
+        <li><a href="ingestion.html#module-ingestion">ingestion</a>
 </li>
-        <li><a href="dags/ingestion.html#module-ingestion.fm_raw_model_tfm">ingestion.fm_raw_model_tfm</a>, <a href="ingestion.html#module-ingestion.fm_raw_model_tfm">[1]</a>
+        <li><a href="ingestion.html#module-ingestion.fm_raw_model_tfm">ingestion.fm_raw_model_tfm</a>
 </li>
-        <li><a href="dags/ingestion.html#module-ingestion.fm_s3_snowflake">ingestion.fm_s3_snowflake</a>, <a href="ingestion.html#module-ingestion.fm_s3_snowflake">[1]</a>
+        <li><a href="ingestion.html#module-ingestion.fm_s3_snowflake">ingestion.fm_s3_snowflake</a>
 </li>
-        <li><a href="dags/ingestion.html#module-ingestion.fm_s3_snowflake_direct_raw">ingestion.fm_s3_snowflake_direct_raw</a>, <a href="ingestion.html#module-ingestion.fm_s3_snowflake_direct_raw">[1]</a>
+        <li><a href="ingestion.html#module-ingestion.fm_s3_snowflake_direct_raw">ingestion.fm_s3_snowflake_direct_raw</a>
 </li>
-        <li><a href="dags/preprocessing.html#module-preprocessing">preprocessing</a>, <a href="preprocessing.html#module-preprocessing">[1]</a>
+        <li><a href="preprocessing.html#module-preprocessing">preprocessing</a>
 </li>
-        <li><a href="dags/preprocessing.html#module-preprocessing.fm_data_segregation">preprocessing.fm_data_segregation</a>, <a href="preprocessing.html#module-preprocessing.fm_data_segregation">[1]</a>
+        <li><a href="preprocessing.html#module-preprocessing.fm_data_segregation">preprocessing.fm_data_segregation</a>
+</li>
+        <li><a href="preprocessing.html#module-preprocessing.fm_sessionization">preprocessing.fm_sessionization</a>
 </li>
       </ul></li>
   </ul></td>
@@ -255,24 +298,31 @@
     preprocessing
 
       <ul>
-        <li><a href="dags/preprocessing.html#module-preprocessing">module</a>, <a href="preprocessing.html#module-preprocessing">[1]</a>
+        <li><a href="preprocessing.html#module-preprocessing">module</a>
 </li>
       </ul></li>
       <li>
     preprocessing.fm_data_segregation
 
       <ul>
-        <li><a href="dags/preprocessing.html#module-preprocessing.fm_data_segregation">module</a>, <a href="preprocessing.html#module-preprocessing.fm_data_segregation">[1]</a>
+        <li><a href="preprocessing.html#module-preprocessing.fm_data_segregation">module</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dags/preprocessing.html#preprocessing.fm_data_segregation.prioritized_sort_fm">prioritized_sort_fm() (in module preprocessing.fm_data_segregation)</a>, <a href="preprocessing.html#preprocessing.fm_data_segregation.prioritized_sort_fm">[1]</a>
-</li>
-      <li><a href="dags/ingestion.html#ingestion.fm_s3_snowflake.processed_files">processed_files() (in module ingestion.fm_s3_snowflake)</a>, <a href="ingestion.html#ingestion.fm_s3_snowflake.processed_files">[1]</a>
+      <li>
+    preprocessing.fm_sessionization
 
       <ul>
-        <li><a href="dags/ingestion.html#ingestion.fm_s3_snowflake_direct_raw.processed_files">(in module ingestion.fm_s3_snowflake_direct_raw)</a>, <a href="ingestion.html#ingestion.fm_s3_snowflake_direct_raw.processed_files">[1]</a>
+        <li><a href="preprocessing.html#module-preprocessing.fm_sessionization">module</a>
+</li>
+      </ul></li>
+      <li><a href="preprocessing.html#preprocessing.fm_data_segregation.prioritized_sort_fm">prioritized_sort_fm() (in module preprocessing.fm_data_segregation)</a>
+</li>
+      <li><a href="ingestion.html#ingestion.fm_s3_snowflake.processed_files">processed_files() (in module ingestion.fm_s3_snowflake)</a>
+
+      <ul>
+        <li><a href="ingestion.html#ingestion.fm_s3_snowflake_direct_raw.processed_files">(in module ingestion.fm_s3_snowflake_direct_raw)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -281,11 +331,13 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dags/ingestion.html#ingestion.fm_raw_model_tfm.saveRawDataModel">saveRawDataModel() (in module ingestion.fm_raw_model_tfm)</a>, <a href="ingestion.html#ingestion.fm_raw_model_tfm.saveRawDataModel">[1]</a>
+      <li><a href="ingestion.html#ingestion.fm_raw_model_tfm.saveRawDataModel">saveRawDataModel() (in module ingestion.fm_raw_model_tfm)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dags/preprocessing.html#preprocessing.fm_data_segregation.stm_w_check">stm_w_check() (in module preprocessing.fm_data_segregation)</a>, <a href="preprocessing.html#preprocessing.fm_data_segregation.stm_w_check">[1]</a>
+      <li><a href="preprocessing.html#preprocessing.fm_sessionization.saveSessionizedData">saveSessionizedData() (in module preprocessing.fm_sessionization)</a>
+</li>
+      <li><a href="preprocessing.html#preprocessing.fm_data_segregation.stm_w_check">stm_w_check() (in module preprocessing.fm_data_segregation)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -293,10 +345,10 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dags/ingestion.html#ingestion.fm_s3_snowflake.timestamp">timestamp() (in module ingestion.fm_s3_snowflake)</a>, <a href="ingestion.html#ingestion.fm_s3_snowflake.timestamp">[1]</a>
+      <li><a href="ingestion.html#ingestion.fm_s3_snowflake.timestamp">timestamp() (in module ingestion.fm_s3_snowflake)</a>
 
       <ul>
-        <li><a href="dags/ingestion.html#ingestion.fm_s3_snowflake_direct_raw.timestamp">(in module ingestion.fm_s3_snowflake_direct_raw)</a>, <a href="ingestion.html#ingestion.fm_s3_snowflake_direct_raw.timestamp">[1]</a>
+        <li><a href="ingestion.html#ingestion.fm_s3_snowflake_direct_raw.timestamp">(in module ingestion.fm_s3_snowflake_direct_raw)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -305,7 +357,7 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="dags/ingestion.html#ingestion.fm_raw_model_tfm.unionAllRectypes">unionAllRectypes() (in module ingestion.fm_raw_model_tfm)</a>, <a href="ingestion.html#ingestion.fm_raw_model_tfm.unionAllRectypes">[1]</a>
+      <li><a href="ingestion.html#ingestion.fm_raw_model_tfm.unionAllRectypes">unionAllRectypes() (in module ingestion.fm_raw_model_tfm)</a>
 </li>
   </ul></td>
 </tr></table>

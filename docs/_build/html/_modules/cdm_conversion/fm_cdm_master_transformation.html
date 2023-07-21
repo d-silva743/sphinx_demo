@@ -39,15 +39,24 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Codebase</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Scripts</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../how-to/setup.html">Setup your environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../requirements.html">Code Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to/requirements.html">Code Requirements</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Software Documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../software-doc/cdata.html">cData Sync</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../software-doc/azure-sso.html">Azure SSO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Airflow</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../airflow-doc/deploy.html">Deploy Airflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../airflow-doc/doc.html">Restart Airflow</a></li>
 </ul>
 
         </div>
@@ -75,7 +84,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for cdm_conversion.fm_cdm_master_transformation</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">snowflake.snowpark.session</span> <span class="kn">import</span> <span class="n">Session</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Test</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">snowflake.snowpark.session</span> <span class="kn">import</span> <span class="n">Session</span>
 <span class="kn">from</span> <span class="nn">snowflake.snowpark.functions</span> <span class="kn">import</span> <span class="n">sproc</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="nb">min</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="n">avg</span>
 <span class="kn">from</span> <span class="nn">snowflake.snowpark</span> <span class="kn">import</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span>
 <span class="kn">from</span> <span class="nn">snowflake.snowpark.functions</span> <span class="kn">import</span> <span class="n">concat</span><span class="p">,</span> <span class="n">lit</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">lag</span><span class="p">,</span> <span class="n">lead</span><span class="p">,</span><span class="n">lower</span><span class="p">,</span><span class="n">trim</span><span class="p">,</span><span class="n">upper</span>
@@ -94,7 +107,7 @@
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span>
 
 
-<div class="viewcode-block" id="init_config"><a class="viewcode-back" href="../../dags/cdm_conversion.html#cdm_conversion.fm_cdm_master_transformation.init_config">[docs]</a><span class="k">def</span> <span class="nf">init_config</span><span class="p">():</span>
+<div class="viewcode-block" id="init_config"><a class="viewcode-back" href="../../cdm_conversion.html#cdm_conversion.fm_cdm_master_transformation.init_config">[docs]</a><span class="k">def</span> <span class="nf">init_config</span><span class="p">():</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function does nothing.</span>

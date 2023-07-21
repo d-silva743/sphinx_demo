@@ -18,7 +18,9 @@
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Setup your environment" href="how-to/setup.html" />
+    <link rel="prev" title="ingestion package" href="ingestion.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -40,15 +42,41 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Installation</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Codebase</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Scripts</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="modules.html#fm-scripts">FM Scripts</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="cdm_conversion.html">cdm_conversion package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ingestion.html">ingestion package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">preprocessing package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-preprocessing.fm_data_segregation">preprocessing.fm_data_segregation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-preprocessing.fm_sessionization">preprocessing.fm_sessionization module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#preprocessing-sessionisation-script-module">preprocessing.sessionisation_script module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-preprocessing">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#pd-scripts">PD Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules.html#vlt-scripts">VLT Scripts</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Installation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="how-to/setup.html">Setup your environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="requirements.html">Code Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how-to/requirements.html">Code Requirements</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Software Documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="software-doc/cdata.html">cData Sync</a></li>
 <li class="toctree-l1"><a class="reference internal" href="software-doc/azure-sso.html">Azure SSO</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Airflow</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="airflow-doc/deploy.html">Deploy Airflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="airflow-doc/doc.html">Restart Airflow</a></li>
 </ul>
 
         </div>
@@ -65,6 +93,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">Scripts</a></li>
       <li class="breadcrumb-item active">preprocessing package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/preprocessing.rst.txt" rel="nofollow"> View page source</a>
@@ -128,8 +157,53 @@
 <dd></dd></dl>
 
 </section>
-<section id="preprocessing-fm-sessionization-module">
-<h2>preprocessing.fm_sessionization module<a class="headerlink" href="#preprocessing-fm-sessionization-module" title="Permalink to this heading"></a></h2>
+<section id="module-preprocessing.fm_sessionization">
+<span id="preprocessing-fm-sessionization-module"></span><h2>preprocessing.fm_sessionization module<a class="headerlink" href="#module-preprocessing.fm_sessionization" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.calcTimeAndCreditThresholds">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">calcTimeAndCreditThresholds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rawDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#calcTimeAndCreditThresholds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.calcTimeAndCreditThresholds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.demarcateSessionStartAndEnds">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">demarcateSessionStartAndEnds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeAndCreditStatusDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#demarcateSessionStartAndEnds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.demarcateSessionStartAndEnds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.execute">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">customerName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.execute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.fetchRawDf">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">fetchRawDf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">customerName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#fetchRawDf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.fetchRawDf" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.forwardFillSessionIds">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">forwardFillSessionIds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uniqueSessionIdDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#forwardFillSessionIds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.forwardFillSessionIds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.generateSessionNumbers">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">generateSessionNumbers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sessionStatesDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#generateSessionNumbers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.generateSessionNumbers" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.generateUniqueSessionIds">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">generateUniqueSessionIds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sessNumDf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#generateUniqueSessionIds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.generateUniqueSessionIds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.init_config">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">init_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#init_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.init_config" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="preprocessing.fm_sessionization.saveSessionizedData">
+<span class="sig-prename descclassname"><span class="pre">preprocessing.fm_sessionization.</span></span><span class="sig-name descname"><span class="pre">saveSessionizedData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sessionizedDf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">customerName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchId</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/preprocessing/fm_sessionization.html#saveSessionizedData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#preprocessing.fm_sessionization.saveSessionizedData" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="preprocessing-sessionisation-script-module">
 <h2>preprocessing.sessionisation_script module<a class="headerlink" href="#preprocessing-sessionisation-script-module" title="Permalink to this heading"></a></h2>
@@ -142,7 +216,10 @@
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ingestion.html" class="btn btn-neutral float-left" title="ingestion package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="how-to/setup.html" class="btn btn-neutral float-right" title="Setup your environment" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 
