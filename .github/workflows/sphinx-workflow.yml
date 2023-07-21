@@ -49,7 +49,7 @@ jobs:
         run: |
           git checkout --orphan gh-pages
           git rm -rf .
-          cp -R docs/_build/html/* .
+          cp -R docs/_build/html
           git add .
           git commit -m "Publish documentation to gh-pages branch"
           git push -f origin gh-pages
