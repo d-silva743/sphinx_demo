@@ -12,15 +12,3 @@ Diagram
       C [description = "database server"];
    }
 
-
-.. blockdiag::
-
-    blockdiag {
-    // Set stacked to nodes.
-    stacked [stacked];
-    diamond [shape = "diamond", stacked];
-    database [shape = "flowchart.database", stacked];
-
-    stacked -> diamond -> database;
-    }
-
