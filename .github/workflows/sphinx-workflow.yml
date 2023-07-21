@@ -26,7 +26,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Generate Documentations
+      - name: Generate Documentation
         run: |
           sphinx-apidoc -o docs airflow/
           cd docs
@@ -50,7 +50,7 @@ jobs:
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         uses: peaceiris/actions-gh-pages@v3
         with:
+          publish_dir: $GITHUB_WORKSPACE/gh-pages
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: $GITHUB_WORKSPACE/docs/_build/html
           force_orphan: true
