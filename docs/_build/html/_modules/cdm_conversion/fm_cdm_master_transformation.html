@@ -84,7 +84,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for cdm_conversion.fm_cdm_master_transformation</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">snowflake.snowpark.session</span> <span class="kn">import</span> <span class="n">Session</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Test</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">snowflake.snowpark.session</span> <span class="kn">import</span> <span class="n">Session</span>
 <span class="kn">from</span> <span class="nn">snowflake.snowpark.functions</span> <span class="kn">import</span> <span class="n">sproc</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="nb">min</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="n">avg</span>
 <span class="kn">from</span> <span class="nn">snowflake.snowpark</span> <span class="kn">import</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span>
 <span class="kn">from</span> <span class="nn">snowflake.snowpark.functions</span> <span class="kn">import</span> <span class="n">concat</span><span class="p">,</span> <span class="n">lit</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">lag</span><span class="p">,</span> <span class="n">lead</span><span class="p">,</span><span class="n">lower</span><span class="p">,</span><span class="n">trim</span><span class="p">,</span><span class="n">upper</span>
