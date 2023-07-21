@@ -43,6 +43,6 @@ jobs:
           git commit -m "Update documentation"
           git push
 
-      - name: Remove the venv folder
+      - name: Remove the venv folder.
         run: |
           rm -rf venv
