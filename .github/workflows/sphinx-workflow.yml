@@ -2,9 +2,7 @@ name: Sphinx Documentation Generator
 
 on:
   push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+    branches: main
 
 jobs:
   build:
@@ -72,3 +70,4 @@ jobs:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: _build/
+          force_orphan: true
