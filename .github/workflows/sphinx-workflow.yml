@@ -46,7 +46,7 @@ jobs:
           git config --local user.email "dom.silva@igt.com"
           git add .
           git commit -m "Update documentation"
-          git push origin main
+          git push
 
       - name: Deploy Pages
         uses: peaceiris/actions-gh-pages@v3
