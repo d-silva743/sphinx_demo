@@ -45,30 +45,9 @@ jobs:
           git commit -m "Update documentation"
           git push
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository.
-        uses: actions/checkout@v3
-
-      - name: Create 'gh-pages' branch
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-        run: |
-          git config --local user.name "d-silva743"
-          git config --local user.email "dom.silva@igt.com"
-          git checkout --orphan gh-pages
-          git rm -rf .
-          git commit --allow-empty -m "Initial commit"
-          git pull
-          git push origin gh-pages
-
       - name: Deploy Pages.
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         uses: peaceiris/actions-gh-pages@v3
         with:
-          publish_branch: gh-pages
+          publish_branch: main
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: _build/
-          force_orphan: true
