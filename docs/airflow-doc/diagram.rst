@@ -1,5 +1,5 @@
 Diagram
-===============
+=======
 
 .. blockdiag::
     :desctable:
