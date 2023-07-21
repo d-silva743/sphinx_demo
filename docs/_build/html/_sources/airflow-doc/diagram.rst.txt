@@ -19,7 +19,7 @@ Diagram
       B [description = "web server"];
       C [description = "database server"];
    }
-   
+
 
 .. blockdiag::
    :desctable:
@@ -34,14 +34,3 @@ Diagram
     stacked -> diamond -> database;
     }
 
-
-.. seqdiag::
-   :align: center
-   :desctable:
-
-   seqdiag {
-       A -> B -> C;
-       A [description = "browsers in each client"];
-       B [description = "web server"];
-       C [description = "database server"];
-   }
