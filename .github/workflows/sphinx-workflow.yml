@@ -30,8 +30,8 @@ jobs:
 
       - name: Generate Documentation
         run: |
-          cd docs
           sphinx-apidoc -o docs airflow/
+          cd docs
           make clean
           make html
 
