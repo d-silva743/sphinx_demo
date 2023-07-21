@@ -58,6 +58,8 @@ jobs:
       - name: Create 'gh-pages' branch
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         run: |
+          git config --local user.name "d-silva743"
+          git config --local user.email "dom.silva@igt.com"
           git checkout --orphan gh-pages
           git rm -rf .
           git commit --allow-empty -m "Initial commit"
