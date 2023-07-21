@@ -2,14 +2,6 @@ Diagram
 =======
 
 .. blockdiag::
-    :desctable:
-
-    blockdiag admin {
-      top_page -> config -> config_edit -> config_confirm -> top_page;
-    }
-
-
-.. blockdiag::
    :desctable:
    :align: center
 
@@ -22,8 +14,6 @@ Diagram
 
 
 .. blockdiag::
-   :desctable:
-   :align: center
 
     blockdiag {
     // Set stacked to nodes.
