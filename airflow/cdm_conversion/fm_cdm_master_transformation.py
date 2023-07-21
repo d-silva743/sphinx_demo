@@ -68,3 +68,18 @@ def add(x, y):
     """
 
     return x + y
+
+
+def add(x, y):
+
+    """
+    Substract two numbers together
+
+    Args:
+        Float or Int
+
+    Return:
+        Float or Int
+    """
+
+    return x - y
