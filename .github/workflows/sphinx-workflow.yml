@@ -42,6 +42,7 @@ jobs:
         run: |
           git config --local user.name "d-silva743"
           git config --local user.email "dom.silva@igt.com"
+          git checkout gh-pages
           git add .
           git commit -m "Update documentation"
           git push
